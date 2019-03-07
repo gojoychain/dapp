@@ -38,6 +38,15 @@ class App extends Component {
     this.setState({ ghusdBalance: await ghusd.methods.balanceOf(this.state.owner).call() });
   }
 
+  onTransferSubmit = async (event) => {
+    event.preventDefault();
+    const accounts = await web3.eth.getAccounts();
+    await ghusd.methods.transferOwnership(this.state.newOwner).send({
+      from: accounts[0]
+    });
+    this.setState({ owner: await ghusd.methods.owner().call() });
+  }
+
   render() {
     return (
       <div>
@@ -67,6 +76,16 @@ class App extends Component {
           <label> GHUSD</label>
         </div>
         <button onClick={this.onBurnSubmit}>Burn</button>
+        <hr />
+        <h4>Transfer ownership</h4>
+        <div>
+          <label>New address </label>
+          <input
+            value={this.state.newOwner}
+            onChange={event => this.setState({ newOwner: event.target.value })}
+          />
+        </div>
+        <button onClick={this.onTransferSubmit}>Transfer</button>
         <hr />
       </div>
     );
