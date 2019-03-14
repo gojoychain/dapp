@@ -14,8 +14,6 @@ class App extends Component {
   };
 
   handleChange = (event, value) => {
-		console.log('TCL: App -> handleChange -> value', value)
-		console.log('TCL: App -> handleChange -> event', event)
     this.setState({ value });
   };
 
@@ -25,13 +23,13 @@ class App extends Component {
       <div>
         <AppBar position="static">
           <Tabs value={value} onChange={this.handleChange}>
-            <Tab label="Item One" />
-            <Tab label="Item Two" />
-            <Tab label="Item Three" />
+            <Tab label="Address Name Service" />
+            <Tab label="GHUSD" />
+            <Tab label="Proof Contract" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><GHUSDContract /></TabContainer>}
-        {value === 1 && <TabContainer><AddressNameService /></TabContainer>}
+        {value === 0 && <TabContainer><AddressNameService /></TabContainer>}
+        {value === 1 && <TabContainer><GHUSDContract /></TabContainer>}
         {value === 2 && <TabContainer><Proof /></TabContainer>}
       </div>
     );

@@ -76,50 +76,9 @@ export default class GHUSDContract extends Component{
     this.setState({ ansOwner: await ans.methods.owner().call() });
   }
 
-
-  render() {
-    return(
+  renderOwnerPart = () => {
+    return (
       <Fragment>
-        <h2>Address Name Service Contract</h2>
-        <p>This contract is owned by {this.state.ansOwner}.</p>
-        <p>Your account address is {this.state.currentAddress}.</p>
-        <hr />
-        <h4>Check name</h4>
-        <div>
-          <label>Type name </label>
-          <input
-            value={this.state.nameValue}
-            onChange={event => this.setState({ nameValue: event.target.value })}
-          />
-        </div>
-        <div>
-        <label>Address {this.state.addressValue}</label>
-        </div>
-        <button onClick={this.onResolveAddressSubmit}>Check</button>
-        <hr />
-        <h4>Set Name</h4>
-        <div>
-          <label>Type name </label>
-          <input
-            value={this.state.newNameValue}
-            onChange={event => this.setState({ newNameValue: event.target.value })}
-          />
-        </div>
-        <button onClick={this.onAssignNameSubmit}>Set</button>
-        <hr />
-        <h4>Check Min Limit</h4>
-        <div>
-          <label>Address </label>
-          <input
-            value={this.state.limitAddress}
-            onChange={event => this.setState({ limitAddress: event.target.value })}
-          />
-        </div>
-        <div>
-        <label> Min Limit Length {this.state.minLimit} </label>
-        </div>
-        <button onClick={this.onGetMinLimitSubmit}>Check</button>
-        <hr />
         <h4>Set Min Limit</h4>
         <div>
           <label>Address </label>
@@ -145,6 +104,55 @@ export default class GHUSDContract extends Component{
         </div>
         <button onClick={this.onTransferAnsSubmit}>Transfer</button>
         <hr />
+      </Fragment>
+    )
+  }
+
+  render() {
+    const { ansOwner, currentAddress, addressValue, nameValue, newNameValue, limitAddress, minLimit } = this.state
+    return(
+      <Fragment>
+        <h2>Address Name Service Contract</h2>
+        <p>This contract is owned by {ansOwner}.</p>
+        <p>Your account address is {currentAddress}.</p>
+        <hr />
+        <h4>Check name</h4>
+        <div>
+          <label>Type name </label>
+          <input
+            value={nameValue}
+            onChange={event => this.setState({ nameValue: event.target.value })}
+          />
+        </div>
+        <div>
+        <label>Address {addressValue}</label>
+        </div>
+        <button onClick={this.onResolveAddressSubmit}>Check</button>
+        <hr />
+        <h4>Set Name</h4>
+        <div>
+          <label>Type name </label>
+          <input
+            value={newNameValue}
+            onChange={event => this.setState({ newNameValue: event.target.value })}
+          />
+        </div>
+        <button onClick={this.onAssignNameSubmit}>Set</button>
+        <hr />
+        <h4>Check Min Limit</h4>
+        <div>
+          <label>Address </label>
+          <input
+            value={limitAddress}
+            onChange={event => this.setState({ limitAddress: event.target.value })}
+          />
+        </div>
+        <div>
+        <label> Min Limit Length {minLimit} </label>
+        </div>
+        <button onClick={this.onGetMinLimitSubmit}>Check</button>
+        <hr />
+        {currentAddress === ansOwner && this.renderOwnerPart()}
       </Fragment>
     )
   }

@@ -13,13 +13,6 @@ export default class GHUSDContract extends Component{
     burnValue: '',
 
     ansOwner: '',
-    newAnsOwner: '',
-    nameValue: '',
-    addressValue: '',
-    newNameValue: '',
-    minLimit: '',
-    newMinLimit: '',
-    limitAddress: ''
   };
 
   async componentDidMount() {
@@ -63,15 +56,9 @@ export default class GHUSDContract extends Component{
     this.setState({ owner: await ghusd.methods.owner().call() });
   }
 
-  render() {
-    return(
+  renderOwnerPart = () => {
+    return (
       <Fragment>
-        <h2>GHUSD Contract</h2>
-        <p>This contract is owned by {this.state.owner}.</p>
-        <p>Your account address is {this.state.currentAddress}.</p>
-        <p>Your current GHUSD balance is {web3.utils.fromWei(this.state.ghusdBalance, 'ether')} GHUSD.</p>
-        <p>Your current GEC balance is {web3.utils.fromWei(this.state.balance, 'ether')} GEC.</p>
-        <hr />
         <h4>Mint by owner</h4>
         <div>
           <label>Mint amount </label>
@@ -103,6 +90,20 @@ export default class GHUSDContract extends Component{
           />
         </div>
         <button onClick={this.onTransferSubmit}>Transfer</button>
+      </Fragment>
+    )
+  }
+
+  render() {
+    return(
+      <Fragment>
+        <h2>GHUSD Contract</h2>
+        <p>This contract is owned by {this.state.owner}.</p>
+        <p>Your account address is {this.state.currentAddress}.</p>
+        <p>Your current GHUSD balance is {web3.utils.fromWei(this.state.ghusdBalance, 'ether')} GHUSD.</p>
+        <p>Your current GEC balance is {web3.utils.fromWei(this.state.balance, 'ether')} GEC.</p>
+        <hr />
+        {this.renderOwnerPart()}
       </Fragment>
     )
   }
