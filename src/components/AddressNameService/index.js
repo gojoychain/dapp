@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react'
+import SimpleField from '../SimpleField'
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
 import ans from '../../ans';
@@ -36,15 +37,18 @@ export default class GHUSDContract extends Component{
     this.setState({ currentAddress, owner, ghusdBalance, balance, ansOwner });
   }
 
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
-  onResolveAddressSubmit = async (event) => {
-    event.preventDefault();
+  onResolveAddressSubmit = async () => {
     const addressValue = await ans.methods.resolveName(this.state.nameValue).call();
     this.setState({ addressValue });
   }
 
-  onAssignNameSubmit = async (event) => {
-    event.preventDefault();
+  onAssignNameSubmit = async () => {
     const accounts = await web3.eth.getAccounts();
     await ans.methods.assignName(this.state.newNameValue).send({
       from: accounts[0]
@@ -52,14 +56,12 @@ export default class GHUSDContract extends Component{
     this.setState({ nameValue: this.state.newNameValue });
   }
 
-  onGetMinLimitSubmit = async (event) => {
-    event.preventDefault();
+  onGetMinLimitSubmit = async () => {
     const minLimit = await ans.methods.getMinLimit(this.state.limitAddress).call();
     this.setState({ minLimit });
   }
 
-  onSetMinLimitSubmit = async (event) => {
-    event.preventDefault();
+  onSetMinLimitSubmit = async () => {
     const accounts = await web3.eth.getAccounts();
     await ans.methods.setMinLimit(this.state.limitAddress, this.state.newMinLimit).send({
       from: accounts[0]
@@ -67,8 +69,7 @@ export default class GHUSDContract extends Component{
     this.setState({ minLimit: await ans.methods.getMinLimit(this.state.limitAddress).call() });
   }
 
-  onTransferAnsSubmit = async (event) => {
-    event.preventDefault();
+  onTransferAnsSubmit = async () => {
     const accounts = await web3.eth.getAccounts();
     await ans.methods.transferOwnership(this.state.newAnsOwner).send({
       from: accounts[0]
@@ -79,78 +80,77 @@ export default class GHUSDContract extends Component{
   renderOwnerPart = () => {
     return (
       <Fragment>
-        <h4>Set Min Limit</h4>
-        <div>
-          <label>Address </label>
-          <input
-            value={this.state.limitAddress}
-            onChange={event => this.setState({ limitAddress: event.target.value })}
-          />
-          <label> Minimum Length </label>
-          <input
-            value={this.state.newMinLimit}
-            onChange={event => this.setState({ newMinLimit: event.target.value })}
-          />
-        </div>
-        <button onClick={this.onSetMinLimitSubmit}>Set</button>
+
+        <SimpleField
+          title='Set Min Limit'
+          handleChange={this.handleChange}
+          changeStateName='limitAddress'
+          value=''
+          onClickFunc={this.onSetMinLimitSubmit}
+          buttonText='Set'
+          label='Type address'
+          helperText=''
+          secondInputLabel='Minimum Length'
+          secondInputChangeStateName='newMinLimit'
+        />
         <hr />
-        <h4>Transfer ownership</h4>
-        <div>
-          <label>New address </label>
-          <input
-            value={this.state.newAnsOwner}
-            onChange={event => this.setState({ newAnsOwner: event.target.value })}
-          />
-        </div>
-        <button onClick={this.onTransferAnsSubmit}>Transfer</button>
+        <SimpleField
+          title='Transfer ownership'
+          handleChange={this.handleChange}
+          changeStateName='newAnsOwner'
+          value=''
+          onClickFunc={this.onTransferAnsSubmit}
+          buttonText='Transfer'
+          label='Type new address'
+          helperText=''
+        />
         <hr />
       </Fragment>
     )
   }
 
   render() {
-    const { ansOwner, currentAddress, addressValue, nameValue, newNameValue, limitAddress, minLimit } = this.state
+    const { ansOwner, currentAddress, addressValue, minLimit } = this.state
     return(
       <Fragment>
         <h2>Address Name Service Contract</h2>
         <p>This contract is owned by {ansOwner}.</p>
         <p>Your account address is {currentAddress}.</p>
         <hr />
-        <h4>Check name</h4>
-        <div>
-          <label>Type name </label>
-          <input
-            value={nameValue}
-            onChange={event => this.setState({ nameValue: event.target.value })}
-          />
-        </div>
-        <div>
-        <label>Address {addressValue}</label>
-        </div>
-        <button onClick={this.onResolveAddressSubmit}>Check</button>
+
+        <SimpleField
+          title='Check name'
+          handleChange={this.handleChange}
+          changeStateName='nameValue'
+          value={addressValue}
+          onClickFunc={this.onResolveAddressSubmit}
+          buttonText='Check'
+          label='Type name'
+          helperText='Address is'
+        />
         <hr />
-        <h4>Set Name</h4>
-        <div>
-          <label>Type name </label>
-          <input
-            value={newNameValue}
-            onChange={event => this.setState({ newNameValue: event.target.value })}
-          />
-        </div>
-        <button onClick={this.onAssignNameSubmit}>Set</button>
+        <SimpleField
+          title='Set Name'
+          handleChange={this.handleChange}
+          changeStateName='newNameValue'
+          onClickFunc={this.onAssignNameSubmit}
+          buttonText='Set'
+          label='Type name'
+          helperText=''
+          value=''
+        />
+
         <hr />
-        <h4>Check Min Limit</h4>
-        <div>
-          <label>Address </label>
-          <input
-            value={limitAddress}
-            onChange={event => this.setState({ limitAddress: event.target.value })}
-          />
-        </div>
-        <div>
-        <label> Min Limit Length {minLimit} </label>
-        </div>
-        <button onClick={this.onGetMinLimitSubmit}>Check</button>
+        <SimpleField
+          title='Check Min Limit'
+          handleChange={this.handleChange}
+          changeStateName='limitAddress'
+          value={minLimit}
+          onClickFunc={this.onGetMinLimitSubmit}
+          buttonText='Check'
+          label='Type Address'
+          helperText='Min Limit Length'
+        />
         <hr />
         {currentAddress === ansOwner && this.renderOwnerPart()}
       </Fragment>

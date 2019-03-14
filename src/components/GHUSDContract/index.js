@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react'
+import SimpleField from '../SimpleField'
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
 import ans from '../../ans';
@@ -28,6 +29,11 @@ export default class GHUSDContract extends Component{
     this.setState({ currentAddress, owner, ghusdBalance, balance, ansOwner });
   }
 
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   onMintSubmit = async (event) => {
     event.preventDefault();
@@ -59,37 +65,41 @@ export default class GHUSDContract extends Component{
   renderOwnerPart = () => {
     return (
       <Fragment>
-        <h4>Mint by owner</h4>
-        <div>
-          <label>Mint amount </label>
-          <input
-            value={this.state.mintValue}
-            onChange={event => this.setState({ mintValue: event.target.value })}
-          />
-          <label> GHUSD</label>
-        </div>
-        <button onClick={this.onMintSubmit}>Mint</button>
+        <SimpleField
+          title='Mint by owner'
+          handleChange={this.handleChange}
+          changeStateName='mintValue'
+          value={''}
+          onClickFunc={this.onMintSubmit}
+          buttonText='Mint'
+          label='Type mint amount'
+          helperText=''
+          adornment = 'GHUSD'
+        />
         <hr />
-        <h4>Burn by owner</h4>
-        <div>
-          <label>Burn amount </label>
-          <input
-            value={this.state.burnValue}
-            onChange={event => this.setState({ burnValue: event.target.value })}
-          />
-          <label> GHUSD</label>
-        </div>
-        <button onClick={this.onBurnSubmit}>Burn</button>
+        <SimpleField
+          title='Burn by owner'
+          handleChange={this.handleChange}
+          changeStateName='burnValue'
+          value={''}
+          onClickFunc={this.onBurnSubmit}
+          buttonText='Burn'
+          label='Type Burn amount'
+          helperText=''
+          adornment = 'GHUSD'
+        />
         <hr />
-        <h4>Transfer ownership</h4>
-        <div>
-          <label>New address </label>
-          <input
-            value={this.state.newOwner}
-            onChange={event => this.setState({ newOwner: event.target.value })}
-          />
-        </div>
-        <button onClick={this.onTransferSubmit}>Transfer</button>
+        <SimpleField
+          title='Transfer ownership'
+          handleChange={this.handleChange}
+          changeStateName='newOwner'
+          value=''
+          onClickFunc={this.onTransferSubmit}
+          buttonText='Transfer'
+          label='Type new address'
+          helperText=''
+        />
+        <hr />
       </Fragment>
     )
   }
