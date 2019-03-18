@@ -28,9 +28,9 @@ class App extends Component {
             <Tab label="Proof Contract" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><AddressNameService /></TabContainer>}
+        {value === 2 && <TabContainer><AddressNameService /></TabContainer>}
         {value === 1 && <TabContainer><GHUSDContract /></TabContainer>}
-        {value === 2 && <TabContainer><Proof /></TabContainer>}
+        {value === 0 && <TabContainer><Proof /></TabContainer>}
       </div>
     );
   }

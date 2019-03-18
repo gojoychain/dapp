@@ -105,15 +105,16 @@ export default class GHUSDContract extends Component{
   }
 
   render() {
+    const { currentAddress, owner, ghusdBalance, balance } = this.state
     return(
       <Fragment>
         <h2>GHUSD Contract</h2>
-        <p>This contract is owned by {this.state.owner}.</p>
-        <p>Your account address is {this.state.currentAddress}.</p>
-        <p>Your current GHUSD balance is {web3.utils.fromWei(this.state.ghusdBalance, 'ether')} GHUSD.</p>
-        <p>Your current GEC balance is {web3.utils.fromWei(this.state.balance, 'ether')} GEC.</p>
+        <p>This contract is owned by {owner}.</p>
+        <p>Your account address is {currentAddress}.</p>
+        <p>Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')} GHUSD.</p>
+        <p>Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.</p>
         <hr />
-        {this.renderOwnerPart()}
+        {owner === currentAddress && this.renderOwnerPart()}
       </Fragment>
     )
   }
