@@ -136,7 +136,7 @@ class AddressNameService extends Component {
           onClickFunc={this.onResolveAddressSubmit}
           buttonText="Check"
           label="Type name"
-          helperText="Address is"
+          helperText="Address is "
         />
         <hr />
         {
@@ -162,7 +162,7 @@ class AddressNameService extends Component {
           onClickFunc={this.onGetMinLimitSubmit}
           buttonText="Check"
           label="Type Address"
-          helperText="Min Limit Length"
+          helperText="Min Limit Length "
         />
         <hr />
         {currentAddress === owner && this.renderOwnerPart()}

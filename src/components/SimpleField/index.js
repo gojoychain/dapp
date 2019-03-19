@@ -33,8 +33,7 @@ const SimpleField = (props) => {
         )
       }
       <Typography variant="h5">
-        {helperText}
-        {value}
+        {helperText} {value}
       </Typography>
       <Button variant="contained" color="primary" onClick={onClickFunc}>
         {buttonText}
