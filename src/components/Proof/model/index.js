@@ -16,6 +16,7 @@ const styles = theme => ({
 
 class ProofOfTransaction extends Component {
   state = {
+    owner: '',
     newOwner: '',
     checked: false,
   };

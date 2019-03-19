@@ -91,7 +91,6 @@ class AddressNameService extends Component {
 
   renderOwnerPart = () => (
     <Fragment>
-
       <SimpleField
         title="Set Min Limit"
         handleChange={this.handleChange}
@@ -125,10 +124,9 @@ class AddressNameService extends Component {
     return (
       <Paper className={classes.root}>
         <h2>Address Name Service Contract</h2>
-        <p>{`This contract is owned by${owner}.`}</p>
-        <p>{`Your account address is${currentAddress}.`}</p>
+        <p>{`This contract is owned by ${owner}.`}</p>
+        <p>{`Your account address is ${currentAddress}.`}</p>
         <hr />
-
         <SimpleField
           title="Check name"
           handleChange={this.handleChange}
