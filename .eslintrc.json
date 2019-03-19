@@ -4,6 +4,7 @@
         "es6": true
     },
     "extends": "airbnb",
+    "parser": "babel-eslint",
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -19,5 +20,13 @@
         "react"
     ],
     "rules": {
+      "react/prop-types": 0,
+      "react/jsx-filename-extension": [
+        1, { "extensions": [".js", ".jsx"] }
+      ],
+      "no-multiple-empty-lines": [
+        "error",
+        { "max": 1, "maxEOF": 0 }
+      ]
     }
 }

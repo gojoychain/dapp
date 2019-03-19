@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import web3 from './web3'
-import GHUSDContract from './components/GHUSDContract'
-import AddressNameService from './components/AddressNameService'
-import Proof from './components/Proof'
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import web3 from './web3';
+import GHUSDContract from './components/GHUSDContract';
+import AddressNameService from './components/AddressNameService';
+import Proof from './components/Proof';
 
 class App extends Component {
   state = {
@@ -16,10 +16,10 @@ class App extends Component {
   async componentDidMount() {
     const accounts = await web3.eth.getAccounts();
     const currentAddress = accounts[0];
-    if(currentAddress === undefined) {
-      return
+    if (currentAddress === undefined) {
+      return;
     }
-    this.setState({currentAddress: accounts[0]})
+    this.setState({ currentAddress: accounts[0] });
   }
 
   handleChange = (event, value) => {
@@ -37,7 +37,7 @@ class App extends Component {
             <Tab label="Proof Contract" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><AddressNameService currentAddress={currentAddress}/></TabContainer>}
+        {value === 0 && <TabContainer><AddressNameService currentAddress={currentAddress} /></TabContainer>}
         {value === 1 && <TabContainer><GHUSDContract currentAddress={currentAddress} /></TabContainer>}
         {value === 2 && <TabContainer><Proof currentAddress={currentAddress} /></TabContainer>}
       </div>
@@ -47,9 +47,10 @@ class App extends Component {
 export default App;
 
 function TabContainer(props) {
+  const { children } = props;
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
-      {props.children}
+      {children}
     </Typography>
   );
 }
