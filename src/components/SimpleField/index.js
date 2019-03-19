@@ -9,7 +9,6 @@ const SimpleField = (props) => {
       <TextField
         id="outlined-name"
         label={label}
-        // value={this.state.name}
         onChange={handleChange(changeStateName)}
         margin="normal"
         variant="outlined"
@@ -22,7 +21,6 @@ const SimpleField = (props) => {
         <TextField
           id="outlined-name"
           label={secondInputLabel}
-          // value={this.state.name}
           onChange={handleChange(secondInputChangeStateName)}
           margin="normal"
           variant="outlined"

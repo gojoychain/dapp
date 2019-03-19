@@ -3,18 +3,22 @@ import SimpleField from '../SimpleField'
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
 import ans from '../../ans';
-export default class GHUSDContract extends Component{
+import { withStyles, Paper } from '@material-ui/core';
+
+
+const styles = theme => ({
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    margin: theme.spacing.unit * 2,
+  },
+});
+class AddressNameService extends Component{
   state = {
     currentAddress: '',
     owner: '',
     newOwner: '',
-    ghusdBalance: '',
-    balance: '',
-    mintValue: '',
-    burnValue: '',
-
-    ansOwner: '',
-    newAnsOwner: '',
     nameValue: '',
     addressValue: '',
     newNameValue: '',
@@ -23,18 +27,25 @@ export default class GHUSDContract extends Component{
     limitAddress: ''
   };
 
-
-  async componentDidMount() {
-    const accounts = await web3.eth.getAccounts();
-    const currentAddress = accounts[0];
-    if(currentAddress === undefined) {
-      return
-    }
-    const owner = await ghusd.methods.owner().call();
+  initState = async () => {
+    const { currentAddress } = this.props
+    if(!currentAddress) return;
     const ghusdBalance = await ghusd.methods.balanceOf(currentAddress).call();
-    const balance = await web3.eth.getBalance(accounts[0]);
-    const ansOwner = await ans.methods.owner().call();
-    this.setState({ currentAddress, owner, ghusdBalance, balance, ansOwner });
+    const balance = await web3.eth.getBalance(currentAddress);
+    const owner = await ans.methods.owner().call();
+    // await this.onGetMinLimitSubmit();
+    this.setState({ currentAddress, owner, ghusdBalance, balance });
+  }
+
+  componentDidMount() {
+    this.initState()
+  }
+
+  componentDidUpdate(prevProps, prevStates) {
+    const { currentAddress } = this.props
+    if(prevProps.currentAddress !== currentAddress){
+      this.initState()
+    }
   }
 
   handleChange = name => event => {
@@ -49,9 +60,9 @@ export default class GHUSDContract extends Component{
   }
 
   onAssignNameSubmit = async () => {
-    const accounts = await web3.eth.getAccounts();
+    const { currentAddress } = this.props
     await ans.methods.assignName(this.state.newNameValue).send({
-      from: accounts[0]
+      from: currentAddress
     });
     this.setState({ nameValue: this.state.newNameValue });
   }
@@ -62,19 +73,19 @@ export default class GHUSDContract extends Component{
   }
 
   onSetMinLimitSubmit = async () => {
-    const accounts = await web3.eth.getAccounts();
+    const { currentAddress } = this.props
     await ans.methods.setMinLimit(this.state.limitAddress, this.state.newMinLimit).send({
-      from: accounts[0]
+      from: currentAddress
     });
     this.setState({ minLimit: await ans.methods.getMinLimit(this.state.limitAddress).call() });
   }
 
   onTransferAnsSubmit = async () => {
-    const accounts = await web3.eth.getAccounts();
-    await ans.methods.transferOwnership(this.state.newAnsOwner).send({
-      from: accounts[0]
+    const { currentAddress } = this.props
+    await ans.methods.transferOwnership(this.state.newOwner).send({
+      from: currentAddress
     });
-    this.setState({ ansOwner: await ans.methods.owner().call() });
+    this.setState({ owner: await ans.methods.owner().call() });
   }
 
   renderOwnerPart = () => {
@@ -97,7 +108,7 @@ export default class GHUSDContract extends Component{
         <SimpleField
           title='Transfer ownership'
           handleChange={this.handleChange}
-          changeStateName='newAnsOwner'
+          changeStateName='newOwner'
           value=''
           onClickFunc={this.onTransferAnsSubmit}
           buttonText='Transfer'
@@ -110,11 +121,12 @@ export default class GHUSDContract extends Component{
   }
 
   render() {
-    const { ansOwner, currentAddress, addressValue, minLimit } = this.state
+    const { owner, addressValue, minLimit } = this.state
+    const { classes, currentAddress } = this.props
     return(
-      <Fragment>
+      <Paper className={classes.root}>
         <h2>Address Name Service Contract</h2>
-        <p>This contract is owned by {ansOwner}.</p>
+        <p>This contract is owned by {owner}.</p>
         <p>Your account address is {currentAddress}.</p>
         <hr />
 
@@ -129,17 +141,18 @@ export default class GHUSDContract extends Component{
           helperText='Address is'
         />
         <hr />
-        <SimpleField
-          title='Set Name'
-          handleChange={this.handleChange}
-          changeStateName='newNameValue'
-          onClickFunc={this.onAssignNameSubmit}
-          buttonText='Set'
-          label='Type name'
-          helperText=''
-          value=''
-        />
-
+        {
+          currentAddress && <SimpleField
+            title='Set Name'
+            handleChange={this.handleChange}
+            changeStateName='newNameValue'
+            onClickFunc={this.onAssignNameSubmit}
+            buttonText='Set'
+            label='Type name'
+            helperText=''
+            value=''
+          />
+        }
         <hr />
         <SimpleField
           title='Check Min Limit'
@@ -152,9 +165,10 @@ export default class GHUSDContract extends Component{
           helperText='Min Limit Length'
         />
         <hr />
-        {currentAddress === ansOwner && this.renderOwnerPart()}
-      </Fragment>
+        {currentAddress === owner && this.renderOwnerPart()}
+      </Paper>
     )
   }
 }
 
+export default withStyles(styles)(AddressNameService)

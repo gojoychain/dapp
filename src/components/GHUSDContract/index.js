@@ -2,8 +2,17 @@ import React, { Component, Fragment } from 'react'
 import SimpleField from '../SimpleField'
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
-import ans from '../../ans';
-export default class GHUSDContract extends Component{
+import { withStyles, Paper } from '@material-ui/core';
+
+const styles = theme => ({
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    margin: theme.spacing.unit * 2,
+  },
+});
+class GHUSDContract extends Component{
   state = {
     currentAddress: '',
     owner: '',
@@ -12,21 +21,26 @@ export default class GHUSDContract extends Component{
     balance: '',
     mintValue: '',
     burnValue: '',
-
-    ansOwner: '',
   };
 
   async componentDidMount() {
-    const accounts = await web3.eth.getAccounts();
-    const currentAddress = accounts[0];
-    if(currentAddress === undefined) {
-      return
+    this.initState()
+  }
+
+  componentDidUpdate(prevProps) {
+    const { currentAddress } = this.props
+    if(prevProps.currentAddress !== currentAddress){
+      this.initState()
     }
+  }
+
+  initState = async () => {
+    const { currentAddress } = this.props
+    if(!currentAddress) return;
     const owner = await ghusd.methods.owner().call();
     const ghusdBalance = await ghusd.methods.balanceOf(currentAddress).call();
-    const balance = await web3.eth.getBalance(accounts[0]);
-    const ansOwner = await ans.methods.owner().call();
-    this.setState({ currentAddress, owner, ghusdBalance, balance, ansOwner });
+    const balance = await web3.eth.getBalance(currentAddress);
+    this.setState({ owner, ghusdBalance, balance });
   }
 
   handleChange = name => event => {
@@ -35,29 +49,26 @@ export default class GHUSDContract extends Component{
     });
   };
 
-  onMintSubmit = async (event) => {
-    event.preventDefault();
-    const accounts = await web3.eth.getAccounts();
-    await ghusd.methods.mint(accounts[0], web3.utils.toWei(this.state.mintValue, 'ether')).send({
-      from: accounts[0]
+  onMintSubmit = async () => {
+    const { currentAddress } = this.props
+    await ghusd.methods.mint(currentAddress, web3.utils.toWei(this.state.mintValue, 'ether')).send({
+      from: currentAddress
     });
     this.setState({ ghusdBalance: await ghusd.methods.balanceOf(this.state.owner).call() });
   }
 
-  onBurnSubmit = async (event) => {
-    event.preventDefault();
-    const accounts = await web3.eth.getAccounts();
-    await ghusd.methods.burn(accounts[0], web3.utils.toWei(this.state.burnValue, 'ether')).send({
-      from: accounts[0]
+  onBurnSubmit = async () => {
+    const { currentAddress } = this.props
+    await ghusd.methods.burn(currentAddress, web3.utils.toWei(this.state.burnValue, 'ether')).send({
+      from: currentAddress
     });
     this.setState({ ghusdBalance: await ghusd.methods.balanceOf(this.state.owner).call() });
   }
 
   onTransferSubmit = async (event) => {
-    event.preventDefault();
-    const accounts = await web3.eth.getAccounts();
+    const { currentAddress } = this.props
     await ghusd.methods.transferOwnership(this.state.newOwner).send({
-      from: accounts[0]
+      from: currentAddress
     });
     this.setState({ owner: await ghusd.methods.owner().call() });
   }
@@ -105,9 +116,10 @@ export default class GHUSDContract extends Component{
   }
 
   render() {
-    const { currentAddress, owner, ghusdBalance, balance } = this.state
+    const { owner, ghusdBalance, balance } = this.state
+    const { classes, currentAddress } = this.props
     return(
-      <Fragment>
+      <Paper className={classes.root}>
         <h2>GHUSD Contract</h2>
         <p>This contract is owned by {owner}.</p>
         <p>Your account address is {currentAddress}.</p>
@@ -115,8 +127,9 @@ export default class GHUSDContract extends Component{
         <p>Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.</p>
         <hr />
         {owner === currentAddress && this.renderOwnerPart()}
-      </Fragment>
+      </Paper>
     )
   }
 }
 
+export default withStyles(styles)(GHUSDContract)
