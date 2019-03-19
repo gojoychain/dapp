@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import { withStyles, Paper } from '@material-ui/core';
+import { withStyles, Paper, Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
 import ans from '../../ans';
+import AddressWrapper from '../AddressWrapper';
 
 const styles = theme => ({
   root: {
@@ -123,15 +124,15 @@ class AddressNameService extends Component {
     const { classes, currentAddress } = this.props;
     return (
       <Paper className={classes.root}>
-        <h2>Address Name Service Contract</h2>
-        <p>{`This contract is owned by ${owner}.`}</p>
-        <p>{`Your account address is ${currentAddress}.`}</p>
+        <h1>Address Name Service Contract</h1>
+        <Typography variant='h5'>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
+        <Typography variant='h5'>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
         <hr />
         <SimpleField
           title="Check name"
           handleChange={this.handleChange}
           changeStateName="nameValue"
-          value={addressValue}
+          value={<AddressWrapper>{addressValue}</AddressWrapper>}
           onClickFunc={this.onResolveAddressSubmit}
           buttonText="Check"
           label="Type name"

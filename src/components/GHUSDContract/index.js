@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import { withStyles, Paper } from '@material-ui/core';
+import { withStyles, Paper,Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
+import AddressWrapper from '../AddressWrapper';
 
 const styles = theme => ({
   root: {
@@ -50,20 +51,20 @@ class GHUSDContract extends Component {
 
   onMintSubmit = async () => {
     const { currentAddress } = this.props;
-    const { mintValue, owner } = this.state;
+    const { mintValue } = this.state;
     await ghusd.methods.mint(currentAddress, web3.utils.toWei(mintValue, 'ether')).send({
       from: currentAddress,
     });
-    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(owner).call() });
+    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(currentAddress).call() });
   }
 
   onBurnSubmit = async () => {
     const { currentAddress } = this.props;
-    const { burnValue, owner } = this.state;
+    const { burnValue } = this.state;
     await ghusd.methods.burn(currentAddress, web3.utils.toWei(burnValue, 'ether')).send({
       from: currentAddress,
     });
-    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(owner).call() });
+    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(currentAddress).call() });
   }
 
   onTransferSubmit = async () => {
@@ -121,10 +122,10 @@ class GHUSDContract extends Component {
     return (
       <Paper className={classes.root}>
         <h2>GHUSD Contract</h2>
-        <p>{`This contract is owned by ${owner}.`}</p>
-        <p>{`Your account address is ${currentAddress}.`}</p>
-        <p>{`Your current GHUSD balance is ${web3.utils.fromWei(ghusdBalance, 'ether')}GHUSD.`}</p>
-        <p>{`Your current GEC balance is ${web3.utils.fromWei(balance, 'ether')}GEC.`}</p>
+        <Typography variant='h5'>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
+        <Typography variant='h5'>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
+        <Typography variant='h5'>Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')}GHUSD.</Typography>
+        <Typography variant='h5'>Your current GEC balance is {web3.utils.fromWei(balance, 'ether')}GEC.</Typography>
         <hr />
         {owner === currentAddress && this.renderOwnerPart()}
       </Paper>

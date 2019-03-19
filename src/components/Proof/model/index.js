@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import web3 from '../../../web3';
 import SimpleField from '../../SimpleField';
+import AddressWrapper from '../../AddressWrapper';
 
 const styles = theme => ({
   root: {
@@ -124,8 +125,8 @@ class ProofOfTransaction extends Component {
     return (
       <Paper className={classes.root}>
         <h1>{title}</h1>
-        <Typography>{`This contract is owned by ${owner}.`}</Typography>
-        <Typography>{`Your account address is ${currentAddress}.`}</Typography>
+        <Typography>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
+        <Typography>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
         {owner === currentAddress && currentAddress !== undefined
           && (
             <Fragment>
