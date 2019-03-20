@@ -3,15 +3,8 @@ import { withStyles, Paper, Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
 import ans from '../../ans';
 import AddressWrapper from '../AddressWrapper';
+import styles from './styles';
 
-const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    margin: theme.spacing.unit * 2,
-  },
-});
 class AddressNameService extends Component {
   state = {
     owner: '',
@@ -39,7 +32,6 @@ class AddressNameService extends Component {
     const { currentAddress } = this.props;
     if (!currentAddress) return;
     const owner = await ans.methods.owner().call();
-    // await this.onGetMinLimitSubmit();
     this.setState({
       owner,
     });
@@ -125,8 +117,8 @@ class AddressNameService extends Component {
     return (
       <Paper className={classes.root}>
         <h1>Address Name Service Contract</h1>
-        <Typography variant='h5'>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography variant='h5'>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
+        <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
+        <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
         <hr />
         <SimpleField
           title="Check name"
@@ -165,7 +157,7 @@ class AddressNameService extends Component {
           helperText="Min Limit Length "
         />
         <hr />
-        {currentAddress === owner && this.renderOwnerPart()}
+        {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()}
       </Paper>
     );
   }

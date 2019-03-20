@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import {
+  AppBar, Tabs, Tab, Typography, withStyles,
+} from '@material-ui/core';
 import web3 from './web3';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import Proof from './components/Proof';
+import styles from './app.styles';
 
 class App extends Component {
   state = {
@@ -46,11 +46,11 @@ class App extends Component {
 }
 export default App;
 
-function TabContainer(props) {
-  const { children } = props;
+const TabContainer = withStyles(styles)((props) => {
+  const { children, classes } = props;
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div" className={classes.tabContainer}>
       {children}
     </Typography>
   );
-}
+});

@@ -1,18 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import { withStyles, Paper,Typography } from '@material-ui/core';
+import { withStyles, Paper, Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
 import web3 from '../../web3';
 import ghusd from '../../ghusd';
 import AddressWrapper from '../AddressWrapper';
+import styles from './styles';
 
-const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    margin: theme.spacing.unit * 2,
-  },
-});
 class GHUSDContract extends Component {
   state = {
     owner: '',
@@ -122,12 +115,12 @@ class GHUSDContract extends Component {
     return (
       <Paper className={classes.root}>
         <h2>GHUSD Contract</h2>
-        <Typography variant='h5'>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography variant='h5'>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
-        <Typography variant='h5'>Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')}GHUSD.</Typography>
-        <Typography variant='h5'>Your current GEC balance is {web3.utils.fromWei(balance, 'ether')}GEC.</Typography>
+        <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
+        <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
+        <Typography variant="h5">Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')}GHUSD.</Typography>
+        <Typography variant="h5">Your current GEC balance is {web3.utils.fromWei(balance, 'ether')}GEC.</Typography>
         <hr />
-        {owner === currentAddress && this.renderOwnerPart()}
+        {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()}
       </Paper>
     );
   }

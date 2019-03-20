@@ -5,15 +5,7 @@ import {
 import web3 from '../../../web3';
 import SimpleField from '../../SimpleField';
 import AddressWrapper from '../../AddressWrapper';
-
-const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    margin: theme.spacing.unit * 2,
-  },
-});
+import styles from './styles';
 
 class ProofOfTransaction extends Component {
   state = {
@@ -68,7 +60,7 @@ class ProofOfTransaction extends Component {
       from: currentAddress,
     });
     await this.onCheckSubmit();
-    this.renderWithdrawlableText();
+    this.renderWithdrawLabelText();
   }
 
   onCheckSubmit = async () => {
@@ -78,7 +70,7 @@ class ProofOfTransaction extends Component {
     this.setState({ currentBlockNumber, lastWithdrawBlock, checked: true });
   }
 
-  renderWithdrawlableText = () => {
+  renderWithdrawLabelText = () => {
     const {
       withdrawInterval, withdrawAmount, currentBlockNumber, lastWithdrawBlock,
     } = this.state;
@@ -92,12 +84,10 @@ class ProofOfTransaction extends Component {
     return (
       <Fragment>
         <Typography>
-          Current Block Number:
-          {currentBlockNumber}
+          {`Current Block Number: ${currentBlockNumber}`}
         </Typography>
         <Typography>
-          Last Withdraw Block Numberw:
-          {lastWithdrawBlock}
+          {`Last Withdraw Block Number: ${lastWithdrawBlock}`}
         </Typography>
         {
           canWithdraw
@@ -134,7 +124,7 @@ class ProofOfTransaction extends Component {
               <div>
                 <Typography>Check withdrawlabe status</Typography>
                 <Button variant="contained" color="primary" onClick={this.onCheckSubmit}>Check</Button>
-                {checked && this.renderWithdrawlableText()}
+                {checked && this.renderWithdrawLabelText()}
               </div>
               <hr />
               <SimpleField
