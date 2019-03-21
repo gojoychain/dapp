@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Paper, Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
-import ans from '../../ans';
+import ans from '../../contracts/ans';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 

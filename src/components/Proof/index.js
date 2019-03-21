@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
-import pot from '../../pot';
-import poi from '../../poi';
-import poc from '../../poc';
+import pot from '../../contracts/pot';
+import poi from '../../contracts/poi';
+import poc from '../../contracts/poc';
 import ProofOfContract from './model';
 
 const GHUSDContract = (props) => {

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withStyles, Paper, Typography } from '@material-ui/core';
 import SimpleField from '../SimpleField';
 import web3 from '../../web3';
-import ghusd from '../../ghusd';
+import ghusd from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 
