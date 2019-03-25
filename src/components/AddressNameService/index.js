@@ -118,6 +118,10 @@ class AddressNameService extends Component {
     const { classes, currentAddress } = this.props;
     const { owner, addressValue, minLimit } = this.state;
 
+    if (!currentAddress) {
+      return <div />;
+    }
+
     return (
       <TabContentContainer>
         <ContractInfoContainer>
@@ -126,9 +130,6 @@ class AddressNameService extends Component {
           </Typography>
           <Typography variant="subtitle1">
             This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
-          </Typography>
-          <Typography variant="subtitle1">
-            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
           </Typography>
         </ContractInfoContainer>
         <APIField

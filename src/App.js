@@ -112,8 +112,12 @@ class App extends Component {
               <Tab label="GHUSD" />
               <Tab label="Mining Contracts" />
               <div className={classes.currentUser}>
-                <Typography className={classes.currentUserText}>Address:</Typography>
-                <Typography className={classes.currentUserText}>{currentAddress}</Typography>
+                <Typography variant="subtitle2" className={classes.currentUserText}>
+                  Address:
+                </Typography>
+                <Typography variant="subtitle2" className={classes.currentUserText}>
+                  {currentAddress}
+                </Typography>
               </div>
             </Tabs>
           </AppBar>

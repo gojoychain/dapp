@@ -151,9 +151,6 @@ class GHUSDContract extends Component {
             This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
           </Typography>
           <Typography variant="subtitle1">
-            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
-          </Typography>
-          <Typography variant="subtitle1">
             Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')} GHUSD.
           </Typography>
           <Typography variant="subtitle1">

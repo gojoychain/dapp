@@ -137,8 +137,12 @@ class MiningContract extends Component {
   }
 
   render() {
-    const { classes, title, currentAddress } = this.props;
+    const { classes, currentAddress, title } = this.props;
     const { owner } = this.state;
+
+    if (!currentAddress || !web3) {
+      return <div />;
+    }
 
     return (
       <TabContentContainer>
@@ -148,9 +152,6 @@ class MiningContract extends Component {
           </Typography>
           <Typography variant="subtitle1">
             This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
-          </Typography>
-          <Typography variant="subtitle1">
-            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
           </Typography>
         </ContractInfoContainer>
         {this.renderOwnerFunctions()}
