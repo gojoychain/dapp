@@ -2,11 +2,11 @@ import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
 import SimpleField from '../SimpleField';
-import web3 from '../../web3';
 import ghusd from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
+import web3 from '../../web3';
 
 class GHUSDContract extends Component {
   state = {
@@ -31,7 +31,8 @@ class GHUSDContract extends Component {
 
   initState = async () => {
     const { currentAddress } = this.props;
-    if (!currentAddress) return;
+    if (!currentAddress || !web3) return;
+
     const owner = await ghusd.methods.owner().call();
     const ghusdBalance = await ghusd.methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
@@ -112,8 +113,13 @@ class GHUSDContract extends Component {
   )
 
   render() {
-    const { owner, ghusdBalance, balance } = this.state;
     const { currentAddress } = this.props;
+    const { owner, ghusdBalance, balance } = this.state;
+
+    if (!currentAddress || !web3) {
+      return <div />;
+    }
+
     return (
       <TabContentContainer>
         <h2>GHUSD Contract</h2>

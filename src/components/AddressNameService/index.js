@@ -2,10 +2,10 @@ import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
 import SimpleField from '../SimpleField';
-import ans from '../../contracts/ans';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
+import ANS from '../../contracts/ans';
 
 class AddressNameService extends Component {
   state = {
@@ -20,43 +20,38 @@ class AddressNameService extends Component {
   };
 
   componentDidMount() {
+    console.log('ans didMount');
     this.initState();
   }
 
   componentDidUpdate(prevProps) {
-    const { currentAddress } = this.props;
-    if (prevProps.currentAddress !== currentAddress) {
+    console.log('ans compDidUpdate', prevProps);
+    const { mmLoaded } = this.props;
+    if (prevProps.mmLoaded !== mmLoaded) {
       this.initState();
     }
   }
 
   initState = async () => {
-    const { currentAddress, network } = this.props;
-    if (!currentAddress) return;
+    console.log('ans initState', ANS());
+    const { currentAddress } = this.props;
+    if (!currentAddress || !ANS()) return;
 
-    const owner = await ans(network).methods.owner().call();
-    this.setState({
-      owner,
-    });
+    const owner = await ANS().methods.owner().call();
+    this.setState({ owner });
   }
-
-  handleChange = name => (event) => {
-    this.setState({
-      [name]: event.target.value,
-    });
-  };
 
   onResolveAddressSubmit = async () => {
     const { network } = this.props;
     const { nameValue } = this.state;
-    const addressValue = await ans(network).methods.resolveName(nameValue).call();
+    const addressValue = await ANS(network).methods.resolveName(nameValue).call();
     this.setState({ addressValue });
   }
 
   onAssignNameSubmit = async () => {
     const { currentAddress, network } = this.props;
     const { newNameValue } = this.state;
-    await ans(network).methods.assignName(newNameValue).send({
+    await ANS(network).methods.assignName(newNameValue).send({
       from: currentAddress,
     });
     this.setState({ nameValue: newNameValue });
@@ -65,29 +60,35 @@ class AddressNameService extends Component {
   onGetMinLimitSubmit = async () => {
     const { network } = this.props;
     const { limitAddress } = this.state;
-    const minLimit = await ans(network).methods.getMinLimit(limitAddress).call();
+    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
     this.setState({ minLimit });
   }
 
   onSetMinLimitSubmit = async () => {
     const { currentAddress, network } = this.props;
     const { limitAddress, newMinLimit } = this.state;
-    await ans(network).methods.setMinLimit(limitAddress, newMinLimit).send({
+    await ANS(network).methods.setMinLimit(limitAddress, newMinLimit).send({
       from: currentAddress,
     });
-    const minLimit = await ans(network).methods.getMinLimit(limitAddress).call();
+    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
     this.setState({ minLimit });
   }
 
   onTransferAnsSubmit = async () => {
     const { currentAddress, network } = this.props;
     const { newOwner } = this.state;
-    await ans(network).methods.transferOwnership(newOwner).send({
+    await ANS(network).methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    const owner = await ans.methods.owner().call();
+    const owner = await ANS.methods.owner().call();
     this.setState({ owner });
   }
+
+  handleChange = name => (event) => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   renderOwnerPart = () => (
     <Fragment>
@@ -119,17 +120,25 @@ class AddressNameService extends Component {
   )
 
   render() {
-    const { currentAddress } = this.props;
+    const { classes, currentAddress } = this.props;
     const { owner, addressValue, minLimit } = this.state;
+
+    console.log('ans render', this.props);
 
     return (
       <TabContentContainer>
-        <h1>Address Name Service Contract</h1>
-        <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
+        <Typography variant="h4" className={classes.heading}>
+          Address Name Service Contract
+        </Typography>
+        <Typography variant="h6">
+          This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+        </Typography>
+        <Typography variant="h6">
+          Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
+        </Typography>
         <hr />
         <SimpleField
-          title="Check name"
+          title="Lookup Name"
           handleChange={this.handleChange}
           changeStateName="nameValue"
           value={<AddressWrapper>{addressValue}</AddressWrapper>}
@@ -165,7 +174,8 @@ class AddressNameService extends Component {
           helperText="Min Limit Length "
         />
         <hr />
-        {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()}
+        {/* {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()} */}
+        {this.renderOwnerPart()}
       </TabContentContainer>
     );
   }

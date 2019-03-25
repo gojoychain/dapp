@@ -6,8 +6,11 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 
+import theme from './theme';
 import styles from './app.styles';
+import web3 from './web3';
 import { CHAIN_ID } from './config';
 import { NETWORK } from './constants';
 import GHUSDContract from './components/GHUSDContract';
@@ -20,6 +23,7 @@ class App extends Component {
     selectedTab: 0,
     currentAddress: undefined,
     network: undefined,
+    mmLoaded: false,
     mmError: undefined,
   };
 
@@ -38,7 +42,9 @@ class App extends Component {
 
       if (accounts[0]) {
         console.info('Found Metamask account:', accounts[0]);
-        this.setState({ currentAddress: accounts[0] });
+        this.setState({ currentAddress: accounts[0] }, () => {
+          this.toggleLoaded();
+        });
       }
     });
 
@@ -49,16 +55,25 @@ class App extends Component {
         return;
       }
 
-      if (network === CHAIN_ID.MAINNET) {
+      if (network === CHAIN_ID.MAINNET || network === CHAIN_ID.TESTNET) {
         console.info('Found Metamask network:', network);
-        this.setState({ network: NETWORK.MAINNET });
-      } else if (network === CHAIN_ID.TESTNET) {
-        console.info('Found Metamask network:', network);
-        this.setState({ network: NETWORK.TESTNET });
+        this.setState({
+          network: network === CHAIN_ID.MAINNET ? NETWORK.MAINNET : NETWORK.TESTNET,
+        }, () => {
+          this.toggleLoaded();
+        });
       } else {
         this.setState({ mmError: `Invalid Chain ID: ${network}` });
       }
     });
+  }
+
+  toggleLoaded = () => {
+    const { currentAddress, network } = this.state;
+    if (currentAddress && network) {
+      console.log('toggleLoaded true');
+      this.setState({ mmLoaded: true });
+    }
   }
 
   handleTabChange = (event, value) => {
@@ -81,44 +96,67 @@ class App extends Component {
   }
 
   render() {
-    const { selectedTab, currentAddress, network, mmError } = this.state;
+    const {
+      selectedTab,
+      currentAddress,
+      network,
+      mmLoaded,
+      mmError,
+    } = this.state;
 
     // Show not logged in page if no account found or incorrect network
-    if (!currentAddress || !network || mmError) {
+    if (!currentAddress || !network || !mmLoaded || mmError) {
       return this.renderNotLoggedIn();
     }
 
+    console.log('app render mmLoaded', mmLoaded);
+
     return (
-      <div>
-        <AppBar position="static">
-          <Tabs value={selectedTab} onChange={this.handleTabChange}>
-            <Tab label="Address Name Service" />
-            <Tab label="GHUSD" />
-            <Tab label="Mining Contracts" />
-            <Tab label="Settings" />
-          </Tabs>
-        </AppBar>
-        {selectedTab === 0 && (
-          <TabContainer>
-            <AddressNameService currentAddress={currentAddress} network={network} />
-          </TabContainer>
-        )}
-        {selectedTab === 1 && (
-          <TabContainer>
-            <GHUSDContract currentAddress={currentAddress} network={network} />
-          </TabContainer>
-        )}
-        {selectedTab === 2 && (
-          <TabContainer>
-            <MiningContracts currentAddress={currentAddress} network={network} />
-          </TabContainer>
-        )}
-        {selectedTab === 3 && (
-          <TabContainer>
-            <Settings currentAddress={currentAddress} network={network} />
-          </TabContainer>
-        )}
-      </div>
+      <MuiThemeProvider theme={theme}>
+        <div>
+          <AppBar position="static">
+            <Tabs value={selectedTab} onChange={this.handleTabChange}>
+              <Tab label="Address Name Service" />
+              <Tab label="GHUSD" />
+              <Tab label="Mining Contracts" />
+              <Tab label="Settings" />
+            </Tabs>
+          </AppBar>
+          {selectedTab === 0 && (
+            <TabContainer>
+              <AddressNameService
+                currentAddress={currentAddress}
+                network={network}
+                mmLoaded={mmLoaded}
+              />
+            </TabContainer>
+          )}
+          {selectedTab === 1 && (
+            <TabContainer>
+              <GHUSDContract
+                currentAddress={currentAddress}
+                network={network}
+              />
+            </TabContainer>
+          )}
+          {selectedTab === 2 && (
+            <TabContainer>
+              <MiningContracts
+                currentAddress={currentAddress}
+                network={network}
+              />
+            </TabContainer>
+          )}
+          {selectedTab === 3 && (
+            <TabContainer>
+              <Settings
+                currentAddress={currentAddress}
+                network={network}
+              />
+            </TabContainer>
+          )}
+        </div>
+      </MuiThemeProvider>
     );
   }
 }

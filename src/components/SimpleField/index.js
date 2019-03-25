@@ -1,21 +1,42 @@
 import React, { Fragment } from 'react';
 import {
-  Typography, TextField, Button, InputAdornment,
+  Typography,
+  TextField,
+  Button,
+  InputAdornment,
+  Grid,
+  withStyles,
 } from '@material-ui/core';
+
+import styles from './styles';
 
 const SimpleField = (props) => {
   const {
-    title, handleChange, changeStateName, value, onClickFunc, buttonText, label, adornment, helperText, secondInputLabel, secondInputChangeStateName,
+    classes,
+    title,
+    handleChange,
+    changeStateName,
+    value,
+    onClickFunc,
+    buttonText,
+    label,
+    adornment,
+    helperText,
+    secondInputLabel,
+    secondInputChangeStateName,
   } = props;
+
   return (
-    <Fragment>
-      <Typography variant="h5">{title}</Typography>
+    <div className={classes.root}>
+      <Typography className={classes.title} variant="h6">{`${title}: `}</Typography>
       <TextField
+        className={classes.textField1}
         id="outlined-name"
-        label={label}
+        // label={label}
         onChange={handleChange(changeStateName)}
-        margin="normal"
-        variant="outlined"
+        // margin="normal"
+        // variant="outlined"
+        placeholder="Enter name"
         InputProps={{
           endAdornment: adornment && <InputAdornment position="start">{adornment}</InputAdornment>,
         }}
@@ -27,8 +48,8 @@ const SimpleField = (props) => {
           id="outlined-name"
           label={secondInputLabel}
           onChange={handleChange(secondInputChangeStateName)}
-          margin="normal"
-          variant="outlined"
+          // margin="normal"
+          // variant="outlined"
         />
         )
       }
@@ -38,8 +59,8 @@ const SimpleField = (props) => {
       <Button variant="contained" color="primary" onClick={onClickFunc}>
         {buttonText}
       </Button>
-    </Fragment>
+    </div>
   );
 };
 
-export default SimpleField;
+export default withStyles(styles)(SimpleField);

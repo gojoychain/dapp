@@ -6,10 +6,10 @@ import {
 } from '@material-ui/core';
 
 import styles from './styles';
-import web3 from '../../../web3';
 import SimpleField from '../../SimpleField';
 import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
+import web3 from '../../../web3';
 
 class MiningContract extends Component {
   state = {
@@ -31,7 +31,8 @@ class MiningContract extends Component {
 
   initState = async () => {
     const { currentAddress } = this.props;
-    if (!currentAddress) return;
+    if (!currentAddress || !web3) return;
+
     const { contractAt } = this.props;
     const lastWithdrawBlock = await contractAt.methods.lastWithdrawBlock().call();
     const currentBlockNumber = await web3.eth.getBlockNumber();

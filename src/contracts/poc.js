@@ -1,5 +1,5 @@
 import web3 from '../web3';
-import { NETWORK } from '../constants';
+import { CHAIN_ID } from '../config';
 
 // const mainnetAddr = '';
 const testnetAddr = '0x773a94cD164eb9e266a409EC15d829DC3d81eE2d';
@@ -8,9 +8,9 @@ const abi = [{"type":"function","stateMutability":"view","payable":false,"output
 // let mainnet;
 let testnet;
 
-export default (network) => {
-  switch (network) {
-    case NETWORK.MAINNET: {
+export default () => {
+  switch (web3.givenProvider.networkVersion) {
+    case CHAIN_ID.MAINNET: {
       throw Error('Mainnet contract not deployed yet.');
       // TODO: uncomment when mainnet is deployed
       // if (!mainnet) {
@@ -18,14 +18,14 @@ export default (network) => {
       // }
       // return mainnet;
     }
-    case NETWORK.TESTNET: {
+    case CHAIN_ID.TESTNET: {
       if (!testnet) {
-        testnet = new web3.testnet.eth.Contract(abi, testnetAddr);
+        testnet = new web3.eth.Contract(abi, testnetAddr);
       }
       return testnet;
     }
     default: {
-      throw Error(`Invalid network: ${network}`);
+      return undefined;
     }
   }
 };

@@ -1,5 +1,5 @@
 import web3 from '../web3';
-import { NETWORK } from '../constants';
+import { CHAIN_ID } from '../config';
 
 const mainnetAddr = '0x5aaa5122da597ea01ef05e6ca3f3f8d34ea16c3d';
 const testnetAddr = '0xcf3d6838b8c4cbdeed8216a1e12915c6c3b46ad7';
@@ -8,22 +8,22 @@ const abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"toke
 let mainnet;
 let testnet;
 
-export default (network) => {
-  switch (network) {
-    case NETWORK.MAINNET: {
+export default () => {
+  switch (web3.givenProvider.networkVersion) {
+    case CHAIN_ID.MAINNET: {
       if (!mainnet) {
-        mainnet = new web3.mainnet.eth.Contract(abi, mainnetAddr);
+        mainnet = new web3.eth.Contract(abi, mainnetAddr);
       }
       return mainnet;
     }
-    case NETWORK.TESTNET: {
+    case CHAIN_ID.TESTNET: {
       if (!testnet) {
-        testnet = new web3.testnet.eth.Contract(abi, testnetAddr);
+        testnet = new web3.eth.Contract(abi, testnetAddr);
       }
       return testnet;
     }
     default: {
-      throw Error(`Invalid network: ${network}`);
+      return undefined;
     }
   }
 };
