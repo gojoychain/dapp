@@ -40,42 +40,38 @@ class AddressNameService extends Component {
   }
 
   resolveAddress = async () => {
-    const { network } = this.props;
     const { nameValue } = this.state;
-    const addressValue = await ANS(network).methods.resolveName(nameValue).call();
+    const addressValue = await ANS().methods.resolveName(nameValue).call();
     this.setState({ addressValue });
   }
 
   getMinLimit = async () => {
-    const { network } = this.props;
     const { limitAddress } = this.state;
-    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
+    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
     this.setState({ minLimit });
   }
 
   assignName = async () => {
-    const { currentAddress, network } = this.props;
+    const { currentAddress } = this.props;
     const { newNameValue } = this.state;
-    await ANS(network).methods.assignName(newNameValue).send({
-      from: currentAddress,
-    });
+    await ANS().methods.assignName(newNameValue).send({ from: currentAddress });
     this.setState({ nameValue: newNameValue });
   }
 
   setMinLimit = async () => {
-    const { currentAddress, network } = this.props;
+    const { currentAddress } = this.props;
     const { limitAddress, newMinLimit } = this.state;
-    await ANS(network).methods.setMinLimit(limitAddress, newMinLimit).send({
+    await ANS().methods.setMinLimit(limitAddress, newMinLimit).send({
       from: currentAddress,
     });
-    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
+    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
     this.setState({ minLimit });
   }
 
   transferOwnership = async () => {
-    const { currentAddress, network } = this.props;
+    const { currentAddress } = this.props;
     const { newOwner } = this.state;
-    await ANS(network).methods.transferOwnership(newOwner).send({
+    await ANS().methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
     const owner = await ANS.methods.owner().call();

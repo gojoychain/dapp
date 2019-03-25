@@ -11,11 +11,9 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 import styles from './app.styles';
 import { CHAIN_ID } from './config';
-import { NETWORK } from './constants';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import MiningContracts from './components/MiningContracts';
-import Settings from './components/Settings';
 
 class App extends Component {
   state = {
@@ -56,9 +54,7 @@ class App extends Component {
 
       if (network === CHAIN_ID.MAINNET || network === CHAIN_ID.TESTNET) {
         console.info('Found Metamask network:', network);
-        this.setState({
-          network: network === CHAIN_ID.MAINNET ? NETWORK.MAINNET : NETWORK.TESTNET,
-        }, () => {
+        this.setState({ network }, () => {
           this.toggleLoaded();
         });
       } else {
@@ -83,10 +79,10 @@ class App extends Component {
     const { mmError } = this.state;
     return (
       <div className={classes.notLoggedInContainer}>
-        <Typography className={classes.notLoggedInText}>
+        <Typography className={classes.notLoggedInText} variant="subtitle1">
           Not logged into Metamask. Please log in and refresh the page.
         </Typography>
-        <Typography className={classes.notLoggedInError}>
+        <Typography className={classes.notLoggedInError} variant="subtitle1">
           {mmError}
         </Typography>
       </div>
@@ -97,13 +93,12 @@ class App extends Component {
     const {
       selectedTab,
       currentAddress,
-      network,
       mmLoaded,
       mmError,
     } = this.state;
 
     // Show not logged in page if no account found or incorrect network
-    if (!currentAddress || !network || !mmLoaded || mmError) {
+    if (!currentAddress || !mmLoaded || mmError) {
       return this.renderNotLoggedIn();
     }
 
@@ -115,14 +110,12 @@ class App extends Component {
               <Tab label="Address Name Service" />
               <Tab label="GHUSD" />
               <Tab label="Mining Contracts" />
-              <Tab label="Settings" />
             </Tabs>
           </AppBar>
           {selectedTab === 0 && (
             <TabContainer>
               <AddressNameService
                 currentAddress={currentAddress}
-                network={network}
                 mmLoaded={mmLoaded}
               />
             </TabContainer>
@@ -131,7 +124,7 @@ class App extends Component {
             <TabContainer>
               <GHUSDContract
                 currentAddress={currentAddress}
-                network={network}
+                mmLoaded={mmLoaded}
               />
             </TabContainer>
           )}
@@ -139,15 +132,7 @@ class App extends Component {
             <TabContainer>
               <MiningContracts
                 currentAddress={currentAddress}
-                network={network}
-              />
-            </TabContainer>
-          )}
-          {selectedTab === 3 && (
-            <TabContainer>
-              <Settings
-                currentAddress={currentAddress}
-                network={network}
+                mmLoaded={mmLoaded}
               />
             </TabContainer>
           )}
@@ -161,8 +146,8 @@ export default withStyles(styles)(App);
 const TabContainer = withStyles(styles)((props) => {
   const { children, classes } = props;
   return (
-    <Typography component="div" className={classes.tabContainer}>
+    <div component="div" className={classes.tabContainer}>
       {children}
-    </Typography>
+    </div>
   );
 });
