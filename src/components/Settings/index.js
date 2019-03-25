@@ -9,12 +9,12 @@ import {
 } from '@material-ui/core';
 
 import styles from './styles';
-import { NETWORKS } from '../../constants';
+import { NETWORK } from '../../constants';
 import TabContentContainer from '../TabContentContainer';
 
 class Settings extends Component {
   state = {
-    network: NETWORKS.TESTNET,
+    network: NETWORK.TESTNET,
   };
 
   componentDidMount() {
@@ -53,11 +53,11 @@ class Settings extends Component {
                 value={network}
                 onChange={e => this.handleNetworkChange(e.target.value)}
               >
-                <MenuItem value={NETWORKS.MAINNET}>
-                  {NETWORKS.MAINNET}
+                <MenuItem value={NETWORK.MAINNET}>
+                  {NETWORK.MAINNET}
                 </MenuItem>
-                <MenuItem value={NETWORKS.TESTNET}>
-                  {NETWORKS.TESTNET}
+                <MenuItem value={NETWORK.TESTNET}>
+                  {NETWORK.TESTNET}
                 </MenuItem>
               </Select>
             </FormControl>

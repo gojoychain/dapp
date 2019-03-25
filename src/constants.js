@@ -1,5 +1,5 @@
 module.exports = Object.freeze({
-  NETWORKS: {
+  NETWORK: {
     MAINNET: 'MAINNET',
     TESTNET: 'TESTNET',
   },

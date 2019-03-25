@@ -8,35 +8,53 @@ import {
 } from '@material-ui/core';
 
 import styles from './app.styles';
-import web3 from './web3';
+import { NETWORK } from './constants';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import MiningContracts from './components/MiningContracts';
 import Settings from './components/Settings';
-import { NETWORK } from './constants';
 
 class App extends Component {
   state = {
-    value: 0,
+    selectedTab: 0,
   };
 
-  async componentDidMount() {
-    const accounts = await web3.eth.getAccounts();
-    const currentAddress = accounts[0];
-    if (currentAddress === undefined) {
+  componentDidMount() {
+    if (!window.web3) {
+      this.setState({ currentAddress: undefined });
       return;
     }
-    this.setState({ currentAddress: accounts[0] });
+
+    window.web3.eth.getAccounts((err, accounts) => {
+      console.log('Found Metamask account:', accounts[0]);
+      this.setState({ currentAddress: accounts[0] });
+    });
   }
 
-  handleChange = (event, value) => {
-    this.setState({ value });
+  handleTabChange = (event, value) => {
+    this.setState({ selectedTab: value });
   };
 
+  renderNotLoggedIn = () => {
+    const { classes } = this.props;
+    return (
+      <div className={classes.notLoggedInContainer}>
+        <Typography className={classes.notLoggedInText}>
+          Not logged into Metamask. Please log in and refresh the page.
+        </Typography>
+      </div>
+    );
+  }
+
   render() {
-    const { value, currentAddress } = this.state;
-    console.log(window.web3);
-    
+    const { selectedTab, currentAddress } = this.state;
+    console.log('main render', currentAddress);
+
+    // Show not logged in page if no account
+    if (!currentAddress) {
+      return this.renderNotLoggedIn();
+    }
+
     let network;
     switch (window.web3.currentProvider.networkVersion) {
       case '18': {
@@ -55,29 +73,29 @@ class App extends Component {
     return (
       <div>
         <AppBar position="static">
-          <Tabs value={value} onChange={this.handleChange}>
+          <Tabs value={selectedTab} onChange={this.handleTabChange}>
             <Tab label="Address Name Service" />
             <Tab label="GHUSD" />
             <Tab label="Mining Contracts" />
             <Tab label="Settings" />
           </Tabs>
         </AppBar>
-        {value === 0 && (
+        {selectedTab === 0 && (
           <TabContainer>
             <AddressNameService currentAddress={currentAddress} network={network} />
           </TabContainer>
         )}
-        {value === 1 && (
+        {selectedTab === 1 && (
           <TabContainer>
             <GHUSDContract currentAddress={currentAddress} network={network} />
           </TabContainer>
         )}
-        {value === 2 && (
+        {selectedTab === 2 && (
           <TabContainer>
             <MiningContracts currentAddress={currentAddress} network={network} />
           </TabContainer>
         )}
-        {value === 3 && (
+        {selectedTab === 3 && (
           <TabContainer>
             <Settings currentAddress={currentAddress} network={network} />
           </TabContainer>
@@ -86,7 +104,7 @@ class App extends Component {
     );
   }
 }
-export default App;
+export default withStyles(styles)(App);
 
 const TabContainer = withStyles(styles)((props) => {
   const { children, classes } = props;
