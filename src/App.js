@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import {
-  AppBar, Tabs, Tab, Typography, withStyles,
+  AppBar,
+  Tabs,
+  Tab,
+  Typography,
+  withStyles,
 } from '@material-ui/core';
+
+import styles from './app.styles';
 import web3 from './web3';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import MiningContracts from './components/MiningContracts';
-import styles from './app.styles';
+import Settings from './components/Settings';
 
 class App extends Component {
   state = {
@@ -35,11 +41,13 @@ class App extends Component {
             <Tab label="Address Name Service" />
             <Tab label="GHUSD" />
             <Tab label="Mining Contracts" />
+            <Tab label="Settings" />
           </Tabs>
         </AppBar>
         {value === 0 && <TabContainer><AddressNameService currentAddress={currentAddress} /></TabContainer>}
         {value === 1 && <TabContainer><GHUSDContract currentAddress={currentAddress} /></TabContainer>}
         {value === 2 && <TabContainer><MiningContracts currentAddress={currentAddress} /></TabContainer>}
+        {value === 3 && <TabContainer><Settings currentAddress={currentAddress} /></TabContainer>}
       </div>
     );
   }
