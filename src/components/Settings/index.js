@@ -4,7 +4,6 @@ import {
   Grid,
   Typography,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
 } from '@material-ui/core';
