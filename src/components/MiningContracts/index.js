@@ -9,17 +9,17 @@ const MiningContracts = (props) => {
   return (
     <Fragment>
       <BaseMiningContract
-        contractAt={pot}
+        contract={pot()}
         currentAddress={currentAddress}
         title="Proof Of Transaction Contract"
       />
       <BaseMiningContract
-        contractAt={poi}
+        contract={poi()}
         currentAddress={currentAddress}
         title="Proof Of Investment Contract"
       />
       <BaseMiningContract
-        contractAt={poc}
+        contract={poc()}
         currentAddress={currentAddress}
         title="Proof Of Contribution Contract"
       />

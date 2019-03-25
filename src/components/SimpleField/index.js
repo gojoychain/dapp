@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   InputAdornment,
-  Grid,
   withStyles,
 } from '@material-ui/core';
 
@@ -17,14 +16,16 @@ const SimpleField = (props) => {
     description,
     handleChange,
     changeStateName,
-    value,
     onClickFunc,
-    buttonText,
     label,
+    buttonText,
     adornment,
     helperText,
+    value,
+    secondOnClickFunc,
     secondInputLabel,
     secondInputChangeStateName,
+    secondButtonText,
   } = props;
 
   return (
@@ -32,42 +33,53 @@ const SimpleField = (props) => {
       <Typography className={classes.title} variant="h6">{title}</Typography>
       <Typography className={classes.description} variant="subtitle1">{description}</Typography>
       <div className={classes.submitContainer}>
-        <TextField
-          id="outlined-name"
-          className={classes.textField}
-          label={label}
-          onChange={handleChange(changeStateName)}
-          InputProps={{
-            endAdornment: adornment && <InputAdornment position="start">{adornment}</InputAdornment>,
-          }}
-        />
-        {
-          secondInputLabel
-          && (
+        {label && (
+          <TextField
+            id="outlined-name"
+            className={classes.textField}
+            label={label}
+            onChange={handleChange(changeStateName)}
+            InputProps={{
+              endAdornment: adornment && <InputAdornment position="start">{adornment}</InputAdornment>,
+            }}
+          />
+        )}
+        {secondInputLabel && (
           <TextField
             id="outlined-name"
             className={classes.textField}
             label={secondInputLabel}
             onChange={handleChange(secondInputChangeStateName)}
           />
-          )
-        }
-        <Button
-          className={classes.button}
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={onClickFunc}
-        >
-          {buttonText}
-        </Button>
+        )}
+        <Fragment>
+          <Button
+            className={classes.button}
+            variant="contained"
+            size="small"
+            color="primary"
+            onClick={onClickFunc}
+          >
+            {buttonText}
+          </Button>
+          {secondOnClickFunc && secondButtonText && (
+            <Button
+              className={`${classes.button} second`}
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={secondOnClickFunc}
+            >
+              {secondButtonText}
+            </Button>
+          )}
+        </Fragment>
       </div>
       {value && (
         <Typography variant="subtitle2">
           {helperText} {value}
         </Typography>
       )}
-      {/* <div className={classes.divider} /> */}
     </div>
   );
 };

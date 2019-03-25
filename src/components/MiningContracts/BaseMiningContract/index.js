@@ -1,21 +1,23 @@
 import React, { Component, Fragment } from 'react';
-import {
-  Typography as MTypography,
-  Button,
-  withStyles,
-} from '@material-ui/core';
+import { Typography, withStyles } from '@material-ui/core';
 
 import styles from './styles';
 import SimpleField from '../../SimpleField';
 import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
+import ContractInfoContainer from '../../ContractInfoContainer';
 import web3 from '../../../web3';
 
 class MiningContract extends Component {
   state = {
+    currentBlockNumber: 0,
+    lastWithdrawBlock: 0,
+    withdrawInterval: 0,
+    withdrawAmount: '',
     owner: '',
     newOwner: '',
-    checked: false,
+    canWithdraw: false,
+    checkWithdrawText: '',
   };
 
   componentDidMount() {
@@ -23,25 +25,57 @@ class MiningContract extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentAddress } = this.props;
-    if (prevProps.currentAddress !== currentAddress) {
+    const { mmLoaded } = this.props;
+    if (prevProps.mmLoaded !== mmLoaded) {
       this.initState();
     }
   }
 
   initState = async () => {
-    const { currentAddress } = this.props;
-    if (!currentAddress || !web3) return;
+    const { currentAddress, contract } = this.props;
+    if (!currentAddress || !web3 || !contract) return;
 
-    const { contractAt } = this.props;
-    const lastWithdrawBlock = await contractAt.methods.lastWithdrawBlock().call();
     const currentBlockNumber = await web3.eth.getBlockNumber();
-    const withdrawInterval = await contractAt.methods.withdrawInterval().call();
-    const withdrawAmount = web3.utils.fromWei(await contractAt.methods.withdrawAmount().call(), 'ether');
-    const owner = await contractAt.methods.owner().call();
+    const owner = await contract.methods.owner().call();
+    const withdrawInterval = Number(await contract.methods.withdrawInterval().call());
+    const withdrawAmount = web3.utils
+      .fromWei(await contract.methods.withdrawAmount().call(), 'ether');
     this.setState({
-      owner, lastWithdrawBlock, currentBlockNumber, withdrawInterval, withdrawAmount,
+      currentBlockNumber,
+      owner,
+      withdrawInterval,
+      withdrawAmount,
     });
+
+    await this.checkWithdrawStatus();
+  }
+
+  checkWithdrawStatus = async () => {
+    const { contract } = this.props;
+    const lastWithdrawBlock = Number(await contract.methods.lastWithdrawBlock().call());
+    const currentBlockNumber = Number(await web3.eth.getBlockNumber());
+    this.setState({
+      currentBlockNumber,
+      lastWithdrawBlock,
+    }, () => {
+      this.renderWithdrawLabelText();
+    });
+  }
+
+  withdraw = async () => {
+    const { contract, currentAddress } = this.props;
+    await contract.methods.withdraw().send({ from: currentAddress });
+    await this.checkWithdrawStatus();
+    this.renderWithdrawLabelText();
+  }
+
+  transferOwnership = async () => {
+    const { contract, currentAddress } = this.props;
+    const { newOwner } = this.state;
+    await contract.methods.transferOwnership(newOwner).send({
+      from: currentAddress,
+    });
+    this.setState({ owner: await contract.methods.owner().call() });
   }
 
   handleChange = name => (event) => {
@@ -50,110 +84,79 @@ class MiningContract extends Component {
     });
   };
 
-  onTransferSubmit = async () => {
-    const { contractAt, currentAddress } = this.props;
-    const { newOwner } = this.state;
-    await contractAt.methods.transferOwnership(newOwner).send({
-      from: currentAddress,
-    });
-    this.setState({ owner: await contractAt.methods.owner().call() });
-  }
-
-  onWithdraw = async () => {
-    const { contractAt, currentAddress } = this.props;
-    await contractAt.methods.withdraw().send({
-      from: currentAddress,
-    });
-    await this.onCheckSubmit();
-    this.renderWithdrawLabelText();
-  }
-
-  onCheckSubmit = async () => {
-    const { contractAt } = this.props;
-    const lastWithdrawBlock = await contractAt.methods.lastWithdrawBlock().call();
-    const currentBlockNumber = await web3.eth.getBlockNumber();
-    this.setState({ currentBlockNumber, lastWithdrawBlock, checked: true });
-  }
-
   renderWithdrawLabelText = () => {
     const {
-      withdrawInterval, withdrawAmount, currentBlockNumber, lastWithdrawBlock,
+      withdrawInterval,
+      withdrawAmount,
+      currentBlockNumber,
+      lastWithdrawBlock,
     } = this.state;
     const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
 
-    let totalWithdrawAmount = 0;
+    let checkWithdrawText;
     if (canWithdraw) {
       const times = Math.floor((currentBlockNumber - lastWithdrawBlock) / withdrawInterval);
-      totalWithdrawAmount = times * withdrawAmount;
+      const totalWithdrawAmount = times * withdrawAmount;
+      checkWithdrawText = `
+        You can withdraw ${totalWithdrawAmount} GHU in total. 
+        You can withdraw ${times} times for ${withdrawAmount} GHU each.`;
+    } else {
+      const nextWithdrawBlock = lastWithdrawBlock + withdrawInterval;
+      checkWithdrawText = `
+        You cannot withdraw now. 
+        The next withdraw block number is ${nextWithdrawBlock}.`;
     }
-    return (
+    this.setState({ canWithdraw, checkWithdrawText });
+  }
+
+  renderOwnerFunctions = () => {
+    const { currentAddress } = this.props;
+    const { owner, canWithdraw, checkWithdrawText } = this.state;
+    return currentAddress && owner && currentAddress === owner && (
       <Fragment>
-        <Typography>
-          {`Current Block Number: ${currentBlockNumber}`}
-        </Typography>
-        <Typography>
-          {`Last Withdraw Block Number: ${lastWithdrawBlock}`}
-        </Typography>
-        {
-          canWithdraw
-            ? (
-              <div>
-                <Typography>{`You can withdraw ${totalWithdrawAmount} GHU in total.`}</Typography>
-                <Typography>{`Each time you can withdraw ${withdrawAmount} GHU.`}</Typography>
-                <Button variant="contained" color="primary" onClick={this.onWithdraw}>Withdraw</Button>
-              </div>
-            )
-            : (
-              <Typography>
-                You cannot withdraw now. Next withdraw block number is
-                {Number(lastWithdrawBlock) + Number(withdrawInterval)}
-              </Typography>
-            )
-        }
+        <SimpleField
+          title="Check Withdrawable Status"
+          description="Checks if the owner can withdraw from this mining contract."
+          onClickFunc={this.checkWithdrawStatus}
+          secondOnClickFunc={canWithdraw && this.withdraw}
+          buttonText="Check"
+          secondButtonText={canWithdraw && 'Withdraw'}
+          value={checkWithdrawText}
+        />
+        <SimpleField
+          title="Transfer Ownership (Only Owner)"
+          description="Transfers the contract ownership to the given address."
+          handleChange={this.handleChange}
+          changeStateName="newOwner"
+          onClickFunc={this.transferOwnership}
+          buttonText="Transfer"
+          label="Address"
+        />
       </Fragment>
     );
   }
 
   render() {
-    const { checked, owner } = this.state;
-    const { title, currentAddress } = this.props;
+    const { classes, title, currentAddress } = this.props;
+    const { owner } = this.state;
+
     return (
       <TabContentContainer>
-        <h1>{title}</h1>
-        <Typography>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
-        {owner === currentAddress && currentAddress !== undefined
-          && (
-            <Fragment>
-              <hr />
-              <div>
-                <Typography>Check withdrawlabe status</Typography>
-                <Button variant="contained" color="primary" onClick={this.onCheckSubmit}>Check</Button>
-                {checked && this.renderWithdrawLabelText()}
-              </div>
-              <hr />
-              <SimpleField
-                title="Transfer ownership"
-                handleChange={this.handleChange}
-                changeStateName="newOwner"
-                value=""
-                onClickFunc={this.onTransferSubmit}
-                buttonText="Transfer"
-                label="Type new address"
-                helperText=""
-              />
-            </Fragment>
-          )
-        }
+        <ContractInfoContainer>
+          <Typography variant="h4" className={classes.heading}>
+            {title}
+          </Typography>
+          <Typography variant="subtitle1">
+            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+          </Typography>
+          <Typography variant="subtitle1">
+            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
+          </Typography>
+        </ContractInfoContainer>
+        {this.renderOwnerFunctions()}
       </TabContentContainer>
     );
   }
 }
 
 export default withStyles(styles)(MiningContract);
-
-const Typography = ({ children }) => (
-  <MTypography variant="h5">
-    {children}
-  </MTypography>
-);
