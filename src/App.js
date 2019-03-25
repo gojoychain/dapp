@@ -13,6 +13,7 @@ import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import MiningContracts from './components/MiningContracts';
 import Settings from './components/Settings';
+import { NETWORK } from './constants';
 
 class App extends Component {
   state = {
@@ -34,6 +35,23 @@ class App extends Component {
 
   render() {
     const { value, currentAddress } = this.state;
+    console.log(window.web3);
+    
+    let network;
+    switch (window.web3.currentProvider.networkVersion) {
+      case '18': {
+        network = NETWORK.MAINNET;
+        break;
+      }
+      case '8899': {
+        network = NETWORK.TESTNET;
+        break;
+      }
+      default: {
+        console.error(`Invalid network: ${window.web3.currentProvider.networkVersion}`);
+      }
+    }
+
     return (
       <div>
         <AppBar position="static">
@@ -44,10 +62,26 @@ class App extends Component {
             <Tab label="Settings" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><AddressNameService currentAddress={currentAddress} /></TabContainer>}
-        {value === 1 && <TabContainer><GHUSDContract currentAddress={currentAddress} /></TabContainer>}
-        {value === 2 && <TabContainer><MiningContracts currentAddress={currentAddress} /></TabContainer>}
-        {value === 3 && <TabContainer><Settings currentAddress={currentAddress} /></TabContainer>}
+        {value === 0 && (
+          <TabContainer>
+            <AddressNameService currentAddress={currentAddress} network={network} />
+          </TabContainer>
+        )}
+        {value === 1 && (
+          <TabContainer>
+            <GHUSDContract currentAddress={currentAddress} network={network} />
+          </TabContainer>
+        )}
+        {value === 2 && (
+          <TabContainer>
+            <MiningContracts currentAddress={currentAddress} network={network} />
+          </TabContainer>
+        )}
+        {value === 3 && (
+          <TabContainer>
+            <Settings currentAddress={currentAddress} network={network} />
+          </TabContainer>
+        )}
       </div>
     );
   }

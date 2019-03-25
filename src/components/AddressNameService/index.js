@@ -31,9 +31,10 @@ class AddressNameService extends Component {
   }
 
   initState = async () => {
-    const { currentAddress } = this.props;
+    const { currentAddress, network } = this.props;
     if (!currentAddress) return;
-    const owner = await ans.methods.owner().call();
+
+    const owner = await ans(network).methods.owner().call();
     this.setState({
       owner,
     });
@@ -46,42 +47,46 @@ class AddressNameService extends Component {
   };
 
   onResolveAddressSubmit = async () => {
+    const { network } = this.props;
     const { nameValue } = this.state;
-    const addressValue = await ans.methods.resolveName(nameValue).call();
+    const addressValue = await ans(network).methods.resolveName(nameValue).call();
     this.setState({ addressValue });
   }
 
   onAssignNameSubmit = async () => {
-    const { currentAddress } = this.props;
+    const { currentAddress, network } = this.props;
     const { newNameValue } = this.state;
-    await ans.methods.assignName(newNameValue).send({
+    await ans(network).methods.assignName(newNameValue).send({
       from: currentAddress,
     });
     this.setState({ nameValue: newNameValue });
   }
 
   onGetMinLimitSubmit = async () => {
+    const { network } = this.props;
     const { limitAddress } = this.state;
-    const minLimit = await ans.methods.getMinLimit(limitAddress).call();
+    const minLimit = await ans(network).methods.getMinLimit(limitAddress).call();
     this.setState({ minLimit });
   }
 
   onSetMinLimitSubmit = async () => {
-    const { currentAddress } = this.props;
+    const { currentAddress, network } = this.props;
     const { limitAddress, newMinLimit } = this.state;
-    await ans.methods.setMinLimit(limitAddress, newMinLimit).send({
+    await ans(network).methods.setMinLimit(limitAddress, newMinLimit).send({
       from: currentAddress,
     });
-    this.setState({ minLimit: await ans.methods.getMinLimit(limitAddress).call() });
+    const minLimit = await ans(network).methods.getMinLimit(limitAddress).call();
+    this.setState({ minLimit });
   }
 
   onTransferAnsSubmit = async () => {
-    const { currentAddress } = this.props;
+    const { currentAddress, network } = this.props;
     const { newOwner } = this.state;
-    await ans.methods.transferOwnership(newOwner).send({
+    await ans(network).methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    this.setState({ owner: await ans.methods.owner().call() });
+    const owner = await ans.methods.owner().call();
+    this.setState({ owner });
   }
 
   renderOwnerPart = () => (
@@ -114,8 +119,9 @@ class AddressNameService extends Component {
   )
 
   render() {
-    const { owner, addressValue, minLimit } = this.state;
     const { currentAddress } = this.props;
+    const { owner, addressValue, minLimit } = this.state;
+
     return (
       <TabContentContainer>
         <h1>Address Name Service Contract</h1>
