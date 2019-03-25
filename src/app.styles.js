@@ -1,6 +1,20 @@
-const styles = () => ({
+import theme from './theme';
+
+export default () => ({
   tabContainer: {
-    padding: 24,
+    padding: theme.spacing.threeX,
+  },
+  currentUser: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingLeft: theme.spacing.twoX,
+    borderLeft: '1px white solid',
+  },
+  currentUserText: {
+    color: 'white',
+    fontSize: '0.75rem',
   },
   notLoggedInContainer: {
     width: '100vw',
@@ -21,8 +35,6 @@ const styles = () => ({
   notLoggedInError: {
     fontSize: '1rem',
     fontWeight: 'bold',
-    color: 'red',
+    color: theme.palette.primary.main,
   },
 });
-
-export default styles;

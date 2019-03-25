@@ -90,6 +90,7 @@ class App extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const {
       selectedTab,
       currentAddress,
@@ -110,6 +111,10 @@ class App extends Component {
               <Tab label="Address Name Service" />
               <Tab label="GHUSD" />
               <Tab label="Mining Contracts" />
+              <div className={classes.currentUser}>
+                <Typography className={classes.currentUserText}>Address:</Typography>
+                <Typography className={classes.currentUserText}>{currentAddress}</Typography>
+              </div>
             </Tabs>
           </AppBar>
           {selectedTab === 0 && (
