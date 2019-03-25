@@ -15,6 +15,8 @@ class GHUSDContract extends Component {
     newOwner: '',
     ghusdBalance: '',
     balance: '',
+    balanceOfAddr: '',
+    balanceOf: '',
     mintValue: '',
     burnValue: '',
   };
@@ -45,6 +47,14 @@ class GHUSDContract extends Component {
       [name]: event.target.value,
     });
   };
+
+  balanceOf = async () => {
+    const { balanceOfAddr } = this.state;
+    const balanceOf = await GHUSD().methods.balanceOf(balanceOfAddr).call();
+    this.setState({
+      balanceOf: web3.utils.fromWei(balanceOf, 'ether'),
+    });
+  }
 
   mintTokens = async () => {
     const { currentAddress } = this.props;
@@ -77,46 +87,55 @@ class GHUSDContract extends Component {
     this.setState({ owner: await GHUSD().methods.owner().call() });
   }
 
-  renderOwnerPart = () => (
-    <Fragment>
-      <SimpleField
-        title="Mint (Only Owner)"
-        handleChange={this.handleChange}
-        changeStateName="mintValue"
-        value=""
-        onClickFunc={this.mintTokens}
-        buttonText="Mint"
-        label="Amount"
-        helperText=""
-        adornment="GHUSD"
-      />
-      <SimpleField
-        title="Burn (Only Owner)"
-        handleChange={this.handleChange}
-        changeStateName="burnValue"
-        value=""
-        onClickFunc={this.burnTokens}
-        buttonText="Burn"
-        label="Amount"
-        helperText=""
-        adornment="GHUSD"
-      />
-      <SimpleField
-        title="Transfer Ownership (Only Owner)"
-        handleChange={this.handleChange}
-        changeStateName="newOwner"
-        value=""
-        onClickFunc={this.transferOwnership}
-        buttonText="Transfer"
-        label="Address"
-        helperText=""
-      />
-    </Fragment>
-  )
+  renderOwnerFunctions = () => {
+    const { currentAddress } = this.props;
+    const { owner } = this.state;
+    return currentAddress && owner && owner === currentAddress && (
+      <Fragment>
+        <SimpleField
+          title="Mint (Only Owner)"
+          handleChange={this.handleChange}
+          changeStateName="mintValue"
+          value=""
+          onClickFunc={this.mintTokens}
+          buttonText="Mint"
+          label="Amount"
+          helperText=""
+          adornment="GHUSD"
+        />
+        <SimpleField
+          title="Burn (Only Owner)"
+          handleChange={this.handleChange}
+          changeStateName="burnValue"
+          value=""
+          onClickFunc={this.burnTokens}
+          buttonText="Burn"
+          label="Amount"
+          helperText=""
+          adornment="GHUSD"
+        />
+        <SimpleField
+          title="Transfer Ownership (Only Owner)"
+          handleChange={this.handleChange}
+          changeStateName="newOwner"
+          value=""
+          onClickFunc={this.transferOwnership}
+          buttonText="Transfer"
+          label="Address"
+          helperText=""
+        />
+      </Fragment>
+    );
+  }
 
   render() {
     const { classes, currentAddress } = this.props;
-    const { owner, ghusdBalance, balance } = this.state;
+    const {
+      owner,
+      ghusdBalance,
+      balance,
+      balanceOf,
+    } = this.state;
 
     if (!currentAddress || !web3) {
       return <div />;
@@ -141,8 +160,18 @@ class GHUSDContract extends Component {
             Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
           </Typography>
         </ContractInfoContainer>
-        {/* {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()} */}
-        {this.renderOwnerPart()}
+        <SimpleField
+          title="Get Balance"
+          description="Gets the balance for a given address."
+          handleChange={this.handleChange}
+          changeStateName="balanceOfAddr"
+          onClickFunc={this.balanceOf}
+          buttonText="Check"
+          label="Address"
+          helperText="Balance is "
+          value={balanceOf}
+        />
+        {this.renderOwnerFunctions()}
       </TabContentContainer>
     );
   }

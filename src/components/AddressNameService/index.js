@@ -88,7 +88,7 @@ class AddressNameService extends Component {
     });
   };
 
-  renderOwnerPart = () => {
+  renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
     return currentAddress && owner && currentAddress === owner
@@ -170,7 +170,7 @@ class AddressNameService extends Component {
             />
           )
         }
-        {this.renderOwnerPart()}
+        {this.renderOwnerFunctions()}
       </TabContentContainer>
     );
   }
