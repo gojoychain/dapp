@@ -15,6 +15,10 @@ import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
 import MiningContracts from './components/MiningContracts';
 
+const TAB_ANS = 0;
+const TAB_GHUSD = 1;
+const TAB_MINING_CONTRACTS = 2;
+
 class App extends Component {
   state = {
     selectedTab: 0,
@@ -94,6 +98,7 @@ class App extends Component {
     const {
       selectedTab,
       currentAddress,
+      network,
       mmLoaded,
       mmError,
     } = this.state;
@@ -105,23 +110,25 @@ class App extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
-        <div>
+        <div className={classes.root}>
           <AppBar position="static">
             <Tabs value={selectedTab} onChange={this.handleTabChange}>
-              <Tab label="Address Name Service" />
-              <Tab label="GHUSD" />
-              <Tab label="Mining Contracts" />
-              <div className={classes.currentUser}>
-                <Typography variant="subtitle2" className={classes.currentUserText}>
-                  Address:
-                </Typography>
-                <Typography variant="subtitle2" className={classes.currentUserText}>
-                  {currentAddress}
-                </Typography>
-              </div>
+              <Tab
+                label="Address Name Service"
+                hidden={selectedTab !== TAB_ANS}
+              />
+              <Tab
+                label="GHUSD"
+                hidden={selectedTab !== TAB_GHUSD}
+              />
+              <Tab
+                label="Mining Contracts"
+                hidden={selectedTab !== TAB_MINING_CONTRACTS}
+              />
+              <CurrentUser currentAddress={currentAddress} network={network} />
             </Tabs>
           </AppBar>
-          {selectedTab === 0 && (
+          {selectedTab === TAB_ANS && (
             <TabContainer>
               <AddressNameService
                 currentAddress={currentAddress}
@@ -129,7 +136,7 @@ class App extends Component {
               />
             </TabContainer>
           )}
-          {selectedTab === 1 && (
+          {selectedTab === TAB_GHUSD && (
             <TabContainer>
               <GHUSDContract
                 currentAddress={currentAddress}
@@ -137,7 +144,7 @@ class App extends Component {
               />
             </TabContainer>
           )}
-          {selectedTab === 2 && (
+          {selectedTab === TAB_MINING_CONTRACTS && (
             <TabContainer>
               <MiningContracts
                 currentAddress={currentAddress}
@@ -157,6 +164,21 @@ const TabContainer = withStyles(styles)((props) => {
   return (
     <div component="div" className={classes.tabContainer}>
       {children}
+    </div>
+  );
+});
+
+const CurrentUser = withStyles(styles)((props) => {
+  const { classes, currentAddress, network } = props;
+  const networkName = network === CHAIN_ID.MAINNET ? 'Mainnet' : 'Testnet';
+  return (
+    <div className={classes.currentUser}>
+      <Typography variant="subtitle2" className={classes.currentUserText}>
+        Network: {networkName}
+      </Typography>
+      <Typography variant="subtitle2" className={classes.currentUserText}>
+        Address: {currentAddress}
+      </Typography>
     </div>
   );
 });

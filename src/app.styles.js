@@ -1,6 +1,9 @@
 import theme from './theme';
 
 export default () => ({
+  root: {
+    minWidth: 820,
+  },
   tabContainer: {
     padding: theme.spacing.threeX,
   },
@@ -15,6 +18,7 @@ export default () => ({
   currentUserText: {
     color: 'white',
     fontSize: '0.75rem',
+    textTransform: 'uppercase',
   },
   notLoggedInContainer: {
     width: '100vw',
