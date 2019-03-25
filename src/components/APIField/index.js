@@ -57,7 +57,7 @@ const APIField = (props) => {
             className={classes.button}
             variant="contained"
             size="small"
-            color="primary"
+            color="secondary"
             onClick={onClickFunc}
           >
             {buttonText}
@@ -67,7 +67,7 @@ const APIField = (props) => {
               className={`${classes.button} second`}
               variant="contained"
               size="small"
-              color="primary"
+              color="secondary"
               onClick={secondOnClickFunc}
             >
               {secondButtonText}
