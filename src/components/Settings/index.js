@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   withStyles,
-  Paper,
   Grid,
   Typography,
   FormControl,
@@ -12,6 +11,7 @@ import {
 
 import styles from './styles';
 import { NETWORKS } from '../../constants';
+import TabContentContainer from '../TabContentContainer';
 
 class Settings extends Component {
   state = {
@@ -34,7 +34,7 @@ class Settings extends Component {
     const { network } = this.state;
 
     return (
-      <Paper className={classes.root}>
+      <TabContentContainer>
         <h1>Settings</h1>
         <Grid container spacing={24}>
           <Grid item xs={4}>
@@ -55,7 +55,7 @@ class Settings extends Component {
             </FormControl>
           </Grid>
         </Grid>
-      </Paper>
+      </TabContentContainer>
     );
   }
 }

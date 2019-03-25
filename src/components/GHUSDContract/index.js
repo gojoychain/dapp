@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { withStyles, Paper, Typography } from '@material-ui/core';
+import { withStyles, Typography } from '@material-ui/core';
+
 import SimpleField from '../SimpleField';
 import web3 from '../../web3';
 import ghusd from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
+import TabContentContainer from '../TabContentContainer';
 
 class GHUSDContract extends Component {
   state = {
@@ -111,9 +113,9 @@ class GHUSDContract extends Component {
 
   render() {
     const { owner, ghusdBalance, balance } = this.state;
-    const { classes, currentAddress } = this.props;
+    const { currentAddress } = this.props;
     return (
-      <Paper className={classes.root}>
+      <TabContentContainer>
         <h2>GHUSD Contract</h2>
         <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
         <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
@@ -121,7 +123,7 @@ class GHUSDContract extends Component {
         <Typography variant="h5">Your current GEC balance is {web3.utils.fromWei(balance, 'ether')}GEC.</Typography>
         <hr />
         {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()}
-      </Paper>
+      </TabContentContainer>
     );
   }
 }

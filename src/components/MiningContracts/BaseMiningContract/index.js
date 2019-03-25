@@ -1,11 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import {
-  Typography as MTypography, Button, Paper, withStyles,
+  Typography as MTypography,
+  Button,
+  withStyles,
 } from '@material-ui/core';
+
+import styles from './styles';
 import web3 from '../../../web3';
 import SimpleField from '../../SimpleField';
 import AddressWrapper from '../../AddressWrapper';
-import styles from './styles';
+import TabContentContainer from '../../TabContentContainer';
 
 class MiningContract extends Component {
   state = {
@@ -111,9 +115,9 @@ class MiningContract extends Component {
 
   render() {
     const { checked, owner } = this.state;
-    const { title, classes, currentAddress } = this.props;
+    const { title, currentAddress } = this.props;
     return (
-      <Paper className={classes.root}>
+      <TabContentContainer>
         <h1>{title}</h1>
         <Typography>This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
         <Typography>Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
@@ -140,7 +144,7 @@ class MiningContract extends Component {
             </Fragment>
           )
         }
-      </Paper>
+      </TabContentContainer>
     );
   }
 }
