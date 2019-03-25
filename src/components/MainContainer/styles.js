@@ -1,6 +1,4 @@
-import theme from './theme';
-
-export default () => ({
+export default theme => ({
   root: {
     minWidth: 820,
   },

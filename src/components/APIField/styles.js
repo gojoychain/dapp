@@ -1,4 +1,4 @@
-const styles = theme => ({
+export default theme => ({
   root: {
     marginBottom: theme.spacing.twoX,
     padding: theme.spacing.twoX,
@@ -25,5 +25,3 @@ const styles = theme => ({
     },
   },
 });
-
-export default styles;

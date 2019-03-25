@@ -1,4 +1,4 @@
-const styles = theme => ({
+export default theme => ({
   root: {
     ...theme.mixins.gutters(),
     minWidth: 480,
@@ -6,5 +6,3 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2,
   },
 });
-
-export default styles;
