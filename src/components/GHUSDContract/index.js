@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
 import SimpleField from '../SimpleField';
-import ghusd from '../../contracts/ghusd';
+import GHUSD from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
@@ -23,18 +23,18 @@ class GHUSDContract extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentAddress } = this.props;
-    if (prevProps.currentAddress !== currentAddress) {
+    const { mmLoaded } = this.props;
+    if (prevProps.mmLoaded !== mmLoaded) {
       this.initState();
     }
   }
 
   initState = async () => {
     const { currentAddress } = this.props;
-    if (!currentAddress || !web3) return;
+    if (!currentAddress || !web3 || !GHUSD()) return;
 
-    const owner = await ghusd.methods.owner().call();
-    const ghusdBalance = await ghusd.methods.balanceOf(currentAddress).call();
+    const owner = await GHUSD().methods.owner().call();
+    const ghusdBalance = await GHUSD().methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({ owner, ghusdBalance, balance });
   }
@@ -45,75 +45,76 @@ class GHUSDContract extends Component {
     });
   };
 
-  onMintSubmit = async () => {
+  mintTokens = async () => {
     const { currentAddress } = this.props;
     const { mintValue } = this.state;
-    await ghusd.methods.mint(currentAddress, web3.utils.toWei(mintValue, 'ether')).send({
-      from: currentAddress,
+    await GHUSD().methods
+      .mintTokens(currentAddress, web3.utils.toWei(mintValue, 'ether'))
+      .send({ from: currentAddress });
+    this.setState({
+      ghusdBalance: await GHUSD().methods.balanceOf(currentAddress).call(),
     });
-    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(currentAddress).call() });
   }
 
-  onBurnSubmit = async () => {
+  burnTokens = async () => {
     const { currentAddress } = this.props;
     const { burnValue } = this.state;
-    await ghusd.methods.burn(currentAddress, web3.utils.toWei(burnValue, 'ether')).send({
-      from: currentAddress,
+    await GHUSD().methods
+      .burnTokens(currentAddress, web3.utils.toWei(burnValue, 'ether'))
+      .send({ from: currentAddress });
+    this.setState({
+      ghusdBalance: await GHUSD().methods.balanceOf(currentAddress).call(),
     });
-    this.setState({ ghusdBalance: await ghusd.methods.balanceOf(currentAddress).call() });
   }
 
-  onTransferSubmit = async () => {
+  transferOwnership = async () => {
     const { currentAddress } = this.props;
     const { newOwner } = this.state;
-    await ghusd.methods.transferOwnership(newOwner).send({
+    await GHUSD().methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    this.setState({ owner: await ghusd.methods.owner().call() });
+    this.setState({ owner: await GHUSD().methods.owner().call() });
   }
 
   renderOwnerPart = () => (
     <Fragment>
       <SimpleField
-        title="Mint by owner"
+        title="Mint (Only Owner)"
         handleChange={this.handleChange}
         changeStateName="mintValue"
         value=""
-        onClickFunc={this.onMintSubmit}
+        onClickFunc={this.mintTokens}
         buttonText="Mint"
-        label="Type mint amount"
+        label="Amount"
         helperText=""
         adornment="GHUSD"
       />
-      <hr />
       <SimpleField
-        title="Burn by owner"
+        title="Burn (Only Owner)"
         handleChange={this.handleChange}
         changeStateName="burnValue"
         value=""
-        onClickFunc={this.onBurnSubmit}
+        onClickFunc={this.burnTokens}
         buttonText="Burn"
-        label="Type Burn amount"
+        label="Amount"
         helperText=""
         adornment="GHUSD"
       />
-      <hr />
       <SimpleField
-        title="Transfer ownership"
+        title="Transfer Ownership (Only Owner)"
         handleChange={this.handleChange}
         changeStateName="newOwner"
         value=""
-        onClickFunc={this.onTransferSubmit}
+        onClickFunc={this.transferOwnership}
         buttonText="Transfer"
-        label="Type new address"
+        label="Address"
         helperText=""
       />
-      <hr />
     </Fragment>
   )
 
   render() {
-    const { currentAddress } = this.props;
+    const { classes, currentAddress } = this.props;
     const { owner, ghusdBalance, balance } = this.state;
 
     if (!currentAddress || !web3) {
@@ -122,13 +123,25 @@ class GHUSDContract extends Component {
 
     return (
       <TabContentContainer>
-        <h2>GHUSD Contract</h2>
-        <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
-        <Typography variant="h5">Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')}GHUSD.</Typography>
-        <Typography variant="h5">Your current GEC balance is {web3.utils.fromWei(balance, 'ether')}GEC.</Typography>
-        <hr />
-        {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()}
+        <div className={classes.contractInfoContainer}>
+          <Typography variant="h4" className={classes.heading}>
+            GHUSD Contract
+          </Typography>
+          <Typography variant="subtitle1">
+            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+          </Typography>
+          <Typography variant="subtitle1">
+            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
+          </Typography>
+          <Typography variant="subtitle1">
+            Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')} GHUSD.
+          </Typography>
+          <Typography variant="subtitle1">
+            Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
+          </Typography>
+        </div>
+        {/* {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()} */}
+        {this.renderOwnerPart()}
       </TabContentContainer>
     );
   }
