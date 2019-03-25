@@ -29,6 +29,12 @@ class Settings extends Component {
     // }
   }
 
+  handleNetworkChange = (network) => {
+    this.setState({
+      network,
+    });
+  }
+
   render() {
     const { classes } = this.props;
     const { network } = this.state;
@@ -44,7 +50,10 @@ class Settings extends Component {
           </Grid>
           <Grid item xs={8}>
             <FormControl variant="outlined">
-              <Select value={network}>
+              <Select
+                value={network}
+                onChange={e => this.handleNetworkChange(e.target.value)}
+              >
                 <MenuItem value={NETWORKS.MAINNET}>
                   {NETWORKS.MAINNET}
                 </MenuItem>
