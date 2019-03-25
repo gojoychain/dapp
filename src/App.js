@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 
 import styles from './app.styles';
+import { CHAIN_ID } from './config';
 import { NETWORK } from './constants';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
@@ -48,20 +49,19 @@ class App extends Component {
 
   render() {
     const { selectedTab, currentAddress } = this.state;
-    console.log('main render', currentAddress);
 
-    // Show not logged in page if no account
+    // Show not logged in page if no account found
     if (!currentAddress) {
       return this.renderNotLoggedIn();
     }
 
     let network;
     switch (window.web3.currentProvider.networkVersion) {
-      case '18': {
+      case CHAIN_ID.MAINNET: {
         network = NETWORK.MAINNET;
         break;
       }
-      case '8899': {
+      case CHAIN_ID.TESTNET: {
         network = NETWORK.TESTNET;
         break;
       }
