@@ -38,14 +38,21 @@ class AddressNameService extends Component {
     this.setState({ owner });
   }
 
-  onResolveAddressSubmit = async () => {
+  resolveAddress = async () => {
     const { network } = this.props;
     const { nameValue } = this.state;
     const addressValue = await ANS(network).methods.resolveName(nameValue).call();
     this.setState({ addressValue });
   }
 
-  onAssignNameSubmit = async () => {
+  getMinLimit = async () => {
+    const { network } = this.props;
+    const { limitAddress } = this.state;
+    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
+    this.setState({ minLimit });
+  }
+
+  assignName = async () => {
     const { currentAddress, network } = this.props;
     const { newNameValue } = this.state;
     await ANS(network).methods.assignName(newNameValue).send({
@@ -54,14 +61,7 @@ class AddressNameService extends Component {
     this.setState({ nameValue: newNameValue });
   }
 
-  onGetMinLimitSubmit = async () => {
-    const { network } = this.props;
-    const { limitAddress } = this.state;
-    const minLimit = await ANS(network).methods.getMinLimit(limitAddress).call();
-    this.setState({ minLimit });
-  }
-
-  onSetMinLimitSubmit = async () => {
+  setMinLimit = async () => {
     const { currentAddress, network } = this.props;
     const { limitAddress, newMinLimit } = this.state;
     await ANS(network).methods.setMinLimit(limitAddress, newMinLimit).send({
@@ -71,7 +71,7 @@ class AddressNameService extends Component {
     this.setState({ minLimit });
   }
 
-  onTransferAnsSubmit = async () => {
+  transferOwnership = async () => {
     const { currentAddress, network } = this.props;
     const { newOwner } = this.state;
     await ANS(network).methods.transferOwnership(newOwner).send({
@@ -94,11 +94,9 @@ class AddressNameService extends Component {
         description="Sets the minimum length for a given address."
         handleChange={this.handleChange}
         changeStateName="limitAddress"
-        value=""
-        onClickFunc={this.onSetMinLimitSubmit}
+        onClickFunc={this.setMinLimit}
         buttonText="Set"
         label="Address"
-        helperText=""
         secondInputLabel="Minimum Length"
         secondInputChangeStateName="newMinLimit"
       />
@@ -107,11 +105,9 @@ class AddressNameService extends Component {
         description="Transfers the contract ownership to the given address."
         handleChange={this.handleChange}
         changeStateName="newOwner"
-        value=""
-        onClickFunc={this.onTransferAnsSubmit}
+        onClickFunc={this.transferOwnership}
         buttonText="Set"
         label="Address"
-        helperText=""
       />
     </Fragment>
   )
@@ -139,7 +135,7 @@ class AddressNameService extends Component {
           handleChange={this.handleChange}
           changeStateName="nameValue"
           value={addressValue && <AddressWrapper>{addressValue}</AddressWrapper>}
-          onClickFunc={this.onResolveAddressSubmit}
+          onClickFunc={this.resolveAddress}
           buttonText="Check"
           label="Name"
           helperText="Address is "
@@ -150,10 +146,10 @@ class AddressNameService extends Component {
           handleChange={this.handleChange}
           changeStateName="limitAddress"
           value={minLimit}
-          onClickFunc={this.onGetMinLimitSubmit}
+          onClickFunc={this.getMinLimit}
           buttonText="Check"
           label="Address"
-          helperText="Min Limit Length "
+          helperText="Min Limit is "
         />
         {
           currentAddress && (
@@ -162,11 +158,9 @@ class AddressNameService extends Component {
               description="Assigns the name for the current address."
               handleChange={this.handleChange}
               changeStateName="newNameValue"
-              onClickFunc={this.onAssignNameSubmit}
+              onClickFunc={this.assignName}
               buttonText="Set"
               label="Name"
-              helperText=""
-              value=""
             />
           )
         }
