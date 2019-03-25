@@ -5,7 +5,7 @@ import {
 import web3 from './web3';
 import GHUSDContract from './components/GHUSDContract';
 import AddressNameService from './components/AddressNameService';
-import Proof from './components/Proof';
+import MiningContracts from './components/MiningContracts';
 import styles from './app.styles';
 
 class App extends Component {
@@ -34,12 +34,12 @@ class App extends Component {
           <Tabs value={value} onChange={this.handleChange}>
             <Tab label="Address Name Service" />
             <Tab label="GHUSD" />
-            <Tab label="Proof Contract" />
+            <Tab label="Mining Contracts" />
           </Tabs>
         </AppBar>
         {value === 0 && <TabContainer><AddressNameService currentAddress={currentAddress} /></TabContainer>}
         {value === 1 && <TabContainer><GHUSDContract currentAddress={currentAddress} /></TabContainer>}
-        {value === 2 && <TabContainer><Proof currentAddress={currentAddress} /></TabContainer>}
+        {value === 2 && <TabContainer><MiningContracts currentAddress={currentAddress} /></TabContainer>}
       </div>
     );
   }

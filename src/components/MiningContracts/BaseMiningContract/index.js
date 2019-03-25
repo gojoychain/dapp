@@ -7,7 +7,7 @@ import SimpleField from '../../SimpleField';
 import AddressWrapper from '../../AddressWrapper';
 import styles from './styles';
 
-class ProofOfTransaction extends Component {
+class MiningContract extends Component {
   state = {
     owner: '',
     newOwner: '',
@@ -145,7 +145,7 @@ class ProofOfTransaction extends Component {
   }
 }
 
-export default withStyles(styles)(ProofOfTransaction);
+export default withStyles(styles)(MiningContract);
 
 const Typography = ({ children }) => (
   <MTypography variant="h5">
