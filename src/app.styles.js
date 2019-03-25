@@ -18,6 +18,11 @@ const styles = () => ({
     fontSize: '1rem',
     fontWeight: 'bold',
   },
+  notLoggedInError: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    color: 'red',
+  },
 });
 
 export default styles;

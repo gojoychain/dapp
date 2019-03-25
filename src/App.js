@@ -18,18 +18,35 @@ import Settings from './components/Settings';
 class App extends Component {
   state = {
     selectedTab: 0,
+    currentAddress: undefined,
+    network: undefined,
+    mmError: undefined,
   };
 
   componentDidMount() {
     if (!window.web3) {
-      this.setState({ currentAddress: undefined });
+      this.setState({ currentAddress: undefined, network: undefined });
       return;
     }
 
+    // Set account
     window.web3.eth.getAccounts((err, accounts) => {
-      console.log('Found Metamask account:', accounts[0]);
+      console.info('Found Metamask account:', accounts[0]);
       this.setState({ currentAddress: accounts[0] });
     });
+
+    // Set network
+    const web3Network = window.web3.currentProvider.networkVersion;
+    let network;
+    if (web3Network === CHAIN_ID.MAINNET) {
+      network = NETWORK.MAINNET;
+    } else if (web3Network === CHAIN_ID.TESTNET) {
+      network = NETWORK.TESTNET;
+    } else {
+      console.error(`Invalid network: ${web3Network}`);
+      this.setState({ mmError: `Invalid network: ${web3Network}` });
+    }
+    this.setState({ network });
   }
 
   handleTabChange = (event, value) => {
@@ -38,36 +55,25 @@ class App extends Component {
 
   renderNotLoggedIn = () => {
     const { classes } = this.props;
+    const { mmError } = this.state;
     return (
       <div className={classes.notLoggedInContainer}>
         <Typography className={classes.notLoggedInText}>
           Not logged into Metamask. Please log in and refresh the page.
+        </Typography>
+        <Typography className={classes.notLoggedInError}>
+          {mmError}
         </Typography>
       </div>
     );
   }
 
   render() {
-    const { selectedTab, currentAddress } = this.state;
+    const { selectedTab, currentAddress, network, mmError } = this.state;
 
     // Show not logged in page if no account found
-    if (!currentAddress) {
+    if (!currentAddress || !network || mmError) {
       return this.renderNotLoggedIn();
-    }
-
-    let network;
-    switch (window.web3.currentProvider.networkVersion) {
-      case CHAIN_ID.MAINNET: {
-        network = NETWORK.MAINNET;
-        break;
-      }
-      case CHAIN_ID.TESTNET: {
-        network = NETWORK.TESTNET;
-        break;
-      }
-      default: {
-        console.error(`Invalid network: ${window.web3.currentProvider.networkVersion}`);
-      }
     }
 
     return (
