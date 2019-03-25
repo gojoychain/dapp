@@ -31,22 +31,34 @@ class App extends Component {
 
     // Set account
     window.web3.eth.getAccounts((err, accounts) => {
-      console.info('Found Metamask account:', accounts[0]);
-      this.setState({ currentAddress: accounts[0] });
+      if (err) {
+        this.setState({ mmError: `Error fetching accounts: ${err.message}` });
+        return;
+      }
+
+      if (accounts[0]) {
+        console.info('Found Metamask account:', accounts[0]);
+        this.setState({ currentAddress: accounts[0] });
+      }
     });
 
     // Set network
-    const web3Network = window.web3.currentProvider.networkVersion;
-    let network;
-    if (web3Network === CHAIN_ID.MAINNET) {
-      network = NETWORK.MAINNET;
-    } else if (web3Network === CHAIN_ID.TESTNET) {
-      network = NETWORK.TESTNET;
-    } else {
-      console.error(`Invalid network: ${web3Network}`);
-      this.setState({ mmError: `Invalid network: ${web3Network}` });
-    }
-    this.setState({ network });
+    window.web3.version.getNetwork((err, network) => {
+      if (err) {
+        this.setState({ mmError: `Error fetching network: ${err.message}` });
+        return;
+      }
+
+      if (network === CHAIN_ID.MAINNET) {
+        console.info('Found Metamask network:', network);
+        this.setState({ network: NETWORK.MAINNET });
+      } else if (network === CHAIN_ID.TESTNET) {
+        console.info('Found Metamask network:', network);
+        this.setState({ network: NETWORK.TESTNET });
+      } else {
+        this.setState({ mmError: `Invalid Chain ID: ${network}` });
+      }
+    });
   }
 
   handleTabChange = (event, value) => {
@@ -71,7 +83,7 @@ class App extends Component {
   render() {
     const { selectedTab, currentAddress, network, mmError } = this.state;
 
-    // Show not logged in page if no account found
+    // Show not logged in page if no account found or incorrect network
     if (!currentAddress || !network || mmError) {
       return this.renderNotLoggedIn();
     }
