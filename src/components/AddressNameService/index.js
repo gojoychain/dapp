@@ -87,30 +87,35 @@ class AddressNameService extends Component {
     });
   };
 
-  renderOwnerPart = () => (
-    <Fragment>
-      <SimpleField
-        title="Set Min Limit (Only Owner)"
-        description="Sets the minimum length for a given address."
-        handleChange={this.handleChange}
-        changeStateName="limitAddress"
-        onClickFunc={this.setMinLimit}
-        buttonText="Set"
-        label="Address"
-        secondInputLabel="Minimum Length"
-        secondInputChangeStateName="newMinLimit"
-      />
-      <SimpleField
-        title="Transfer Ownership (Only Owner)"
-        description="Transfers the contract ownership to the given address."
-        handleChange={this.handleChange}
-        changeStateName="newOwner"
-        onClickFunc={this.transferOwnership}
-        buttonText="Set"
-        label="Address"
-      />
-    </Fragment>
-  )
+  renderOwnerPart = () => {
+    const { currentAddress } = this.props;
+    const { owner } = this.state;
+    return currentAddress && owner && currentAddress === owner
+      && (
+        <Fragment>
+          <SimpleField
+            title="Set Min Limit (Only Owner)"
+            description="Sets the minimum length for a given address."
+            handleChange={this.handleChange}
+            changeStateName="limitAddress"
+            onClickFunc={this.setMinLimit}
+            buttonText="Set"
+            label="Address"
+            secondInputLabel="Minimum Length"
+            secondInputChangeStateName="newMinLimit"
+          />
+          <SimpleField
+            title="Transfer Ownership (Only Owner)"
+            description="Transfers the contract ownership to the given address."
+            handleChange={this.handleChange}
+            changeStateName="newOwner"
+            onClickFunc={this.transferOwnership}
+            buttonText="Set"
+            label="Address"
+          />
+        </Fragment>
+      );
+  }
 
   render() {
     const { classes, currentAddress } = this.props;
@@ -164,7 +169,6 @@ class AddressNameService extends Component {
             />
           )
         }
-        {/* {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()} */}
         {this.renderOwnerPart()}
       </TabContentContainer>
     );
