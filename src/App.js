@@ -10,7 +10,6 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import theme from './theme';
 import styles from './app.styles';
-import web3 from './web3';
 import { CHAIN_ID } from './config';
 import { NETWORK } from './constants';
 import GHUSDContract from './components/GHUSDContract';
@@ -71,7 +70,6 @@ class App extends Component {
   toggleLoaded = () => {
     const { currentAddress, network } = this.state;
     if (currentAddress && network) {
-      console.log('toggleLoaded true');
       this.setState({ mmLoaded: true });
     }
   }
@@ -108,8 +106,6 @@ class App extends Component {
     if (!currentAddress || !network || !mmLoaded || mmError) {
       return this.renderNotLoggedIn();
     }
-
-    console.log('app render mmLoaded', mmLoaded);
 
     return (
       <MuiThemeProvider theme={theme}>

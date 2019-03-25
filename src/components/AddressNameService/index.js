@@ -20,12 +20,10 @@ class AddressNameService extends Component {
   };
 
   componentDidMount() {
-    console.log('ans didMount');
     this.initState();
   }
 
   componentDidUpdate(prevProps) {
-    console.log('ans compDidUpdate', prevProps);
     const { mmLoaded } = this.props;
     if (prevProps.mmLoaded !== mmLoaded) {
       this.initState();
@@ -33,7 +31,6 @@ class AddressNameService extends Component {
   }
 
   initState = async () => {
-    console.log('ans initState', ANS());
     const { currentAddress } = this.props;
     if (!currentAddress || !ANS()) return;
 
@@ -93,29 +90,29 @@ class AddressNameService extends Component {
   renderOwnerPart = () => (
     <Fragment>
       <SimpleField
-        title="Set Min Limit"
+        title="Set Min Limit (Only Owner)"
+        description="Sets the minimum length for a given address."
         handleChange={this.handleChange}
         changeStateName="limitAddress"
         value=""
         onClickFunc={this.onSetMinLimitSubmit}
         buttonText="Set"
-        label="Type address"
+        label="Address"
         helperText=""
         secondInputLabel="Minimum Length"
         secondInputChangeStateName="newMinLimit"
       />
-      <hr />
       <SimpleField
-        title="Transfer ownership"
+        title="Transfer Ownership (Only Owner)"
+        description="Transfers the contract ownership to the given address."
         handleChange={this.handleChange}
         changeStateName="newOwner"
         value=""
         onClickFunc={this.onTransferAnsSubmit}
-        buttonText="Transfer"
-        label="Type new address"
+        buttonText="Set"
+        label="Address"
         helperText=""
       />
-      <hr />
     </Fragment>
   )
 
@@ -123,57 +120,56 @@ class AddressNameService extends Component {
     const { classes, currentAddress } = this.props;
     const { owner, addressValue, minLimit } = this.state;
 
-    console.log('ans render', this.props);
-
     return (
       <TabContentContainer>
-        <Typography variant="h4" className={classes.heading}>
-          Address Name Service Contract
-        </Typography>
-        <Typography variant="h6">
-          This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
-        </Typography>
-        <Typography variant="h6">
-          Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
-        </Typography>
-        <hr />
+        <div className={classes.contractInfoContainer}>
+          <Typography variant="h4" className={classes.heading}>
+            Address Name Service Contract
+          </Typography>
+          <Typography variant="subtitle1">
+            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+          </Typography>
+          <Typography variant="subtitle1">
+            Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
+          </Typography>
+        </div>
         <SimpleField
-          title="Lookup Name"
+          title="Resolve Name"
+          description="Looks up the name and returns the assigned address (if set)."
           handleChange={this.handleChange}
           changeStateName="nameValue"
-          value={<AddressWrapper>{addressValue}</AddressWrapper>}
+          value={addressValue && <AddressWrapper>{addressValue}</AddressWrapper>}
           onClickFunc={this.onResolveAddressSubmit}
           buttonText="Check"
-          label="Type name"
+          label="Name"
           helperText="Address is "
         />
-        <hr />
-        {
-          currentAddress && (
-            <SimpleField
-              title="Set Name"
-              handleChange={this.handleChange}
-              changeStateName="newNameValue"
-              onClickFunc={this.onAssignNameSubmit}
-              buttonText="Set"
-              label="Type name"
-              helperText=""
-              value=""
-            />
-          )
-        }
-        <hr />
         <SimpleField
           title="Check Min Limit"
+          description="Returns the minimum length for a given address."
           handleChange={this.handleChange}
           changeStateName="limitAddress"
           value={minLimit}
           onClickFunc={this.onGetMinLimitSubmit}
           buttonText="Check"
-          label="Type Address"
+          label="Address"
           helperText="Min Limit Length "
         />
-        <hr />
+        {
+          currentAddress && (
+            <SimpleField
+              title="Assign Name"
+              description="Assigns the name for the current address."
+              handleChange={this.handleChange}
+              changeStateName="newNameValue"
+              onClickFunc={this.onAssignNameSubmit}
+              buttonText="Set"
+              label="Name"
+              helperText=""
+              value=""
+            />
+          )
+        }
         {/* {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()} */}
         {this.renderOwnerPart()}
       </TabContentContainer>

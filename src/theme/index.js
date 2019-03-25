@@ -13,12 +13,8 @@ export default createMuiTheme({
     twoX: 16,
     threeX: 24,
     fourX: 32,
+    fiveX: 40,
   },
   overrides: {
-    // MuiInputBase: {
-    //   input: {
-    //     padding: 16,
-    //   },
-    // },
   },
 });
