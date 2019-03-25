@@ -115,7 +115,7 @@ class MiningContract extends Component {
     return currentAddress && owner && currentAddress === owner && (
       <Fragment>
         <APIField
-          title="Check Withdrawable Status"
+          title={`Check Withdrawable Status ${canWithdraw ? ' & Withdraw' : ''}`}
           description="Checks if the owner can withdraw from this mining contract."
           onClickFunc={this.checkWithdrawStatus}
           secondOnClickFunc={canWithdraw && this.withdraw}

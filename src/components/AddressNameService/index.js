@@ -107,7 +107,7 @@ class AddressNameService extends Component {
             handleChange={this.handleChange}
             changeStateName="newOwner"
             onClickFunc={this.transferOwnership}
-            buttonText="Set"
+            buttonText="Transfer"
             label="Address"
           />
         </Fragment>
@@ -161,7 +161,7 @@ class AddressNameService extends Component {
               handleChange={this.handleChange}
               changeStateName="newNameValue"
               onClickFunc={this.assignName}
-              buttonText="Set"
+              buttonText="Assign"
               label="Name"
             />
           )

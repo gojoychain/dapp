@@ -90,7 +90,7 @@ class GHUSDContract extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    return currentAddress && owner && owner === currentAddress && (
+    return currentAddress && owner && currentAddress === owner && (
       <Fragment>
         <APIField
           title="Mint (Only Owner)"
