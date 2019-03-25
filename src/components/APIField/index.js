@@ -9,7 +9,7 @@ import {
 
 import styles from './styles';
 
-const SimpleField = (props) => {
+const APIField = (props) => {
   const {
     classes,
     title,
@@ -84,4 +84,4 @@ const SimpleField = (props) => {
   );
 };
 
-export default withStyles(styles)(SimpleField);
+export default withStyles(styles)(APIField);

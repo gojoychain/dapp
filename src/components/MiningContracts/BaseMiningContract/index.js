@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Typography, withStyles } from '@material-ui/core';
 
 import styles from './styles';
-import SimpleField from '../../SimpleField';
+import APIField from '../../APIField';
 import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
 import ContractInfoContainer from '../../ContractInfoContainer';
@@ -114,7 +114,7 @@ class MiningContract extends Component {
     const { owner, canWithdraw, checkWithdrawText } = this.state;
     return currentAddress && owner && currentAddress === owner && (
       <Fragment>
-        <SimpleField
+        <APIField
           title="Check Withdrawable Status"
           description="Checks if the owner can withdraw from this mining contract."
           onClickFunc={this.checkWithdrawStatus}
@@ -123,7 +123,7 @@ class MiningContract extends Component {
           secondButtonText={canWithdraw && 'Withdraw'}
           value={checkWithdrawText}
         />
-        <SimpleField
+        <APIField
           title="Transfer Ownership (Only Owner)"
           description="Transfers the contract ownership to the given address."
           handleChange={this.handleChange}

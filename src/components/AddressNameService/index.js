@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
-import SimpleField from '../SimpleField';
+import APIField from '../APIField';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
@@ -90,7 +90,7 @@ class AddressNameService extends Component {
     return currentAddress && owner && currentAddress === owner
       && (
         <Fragment>
-          <SimpleField
+          <APIField
             title="Set Min Limit (Only Owner)"
             description="Sets the minimum length for a given address."
             handleChange={this.handleChange}
@@ -101,7 +101,7 @@ class AddressNameService extends Component {
             secondInputLabel="Minimum Length"
             secondInputChangeStateName="newMinLimit"
           />
-          <SimpleField
+          <APIField
             title="Transfer Ownership (Only Owner)"
             description="Transfers the contract ownership to the given address."
             handleChange={this.handleChange}
@@ -131,7 +131,7 @@ class AddressNameService extends Component {
             Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
           </Typography>
         </ContractInfoContainer>
-        <SimpleField
+        <APIField
           title="Resolve Name"
           description="Looks up the name and returns the assigned address (if set)."
           handleChange={this.handleChange}
@@ -142,7 +142,7 @@ class AddressNameService extends Component {
           label="Name"
           helperText="Address is "
         />
-        <SimpleField
+        <APIField
           title="Check Min Limit"
           description="Returns the minimum length for a given address."
           handleChange={this.handleChange}
@@ -155,7 +155,7 @@ class AddressNameService extends Component {
         />
         {
           currentAddress && (
-            <SimpleField
+            <APIField
               title="Assign Name"
               description="Assigns the name for the current address."
               handleChange={this.handleChange}

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
-import SimpleField from '../SimpleField';
+import APIField from '../APIField';
 import GHUSD from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
@@ -92,7 +92,7 @@ class GHUSDContract extends Component {
     const { owner } = this.state;
     return currentAddress && owner && owner === currentAddress && (
       <Fragment>
-        <SimpleField
+        <APIField
           title="Mint (Only Owner)"
           handleChange={this.handleChange}
           changeStateName="mintValue"
@@ -103,7 +103,7 @@ class GHUSDContract extends Component {
           helperText=""
           adornment="GHUSD"
         />
-        <SimpleField
+        <APIField
           title="Burn (Only Owner)"
           handleChange={this.handleChange}
           changeStateName="burnValue"
@@ -114,7 +114,7 @@ class GHUSDContract extends Component {
           helperText=""
           adornment="GHUSD"
         />
-        <SimpleField
+        <APIField
           title="Transfer Ownership (Only Owner)"
           handleChange={this.handleChange}
           changeStateName="newOwner"
@@ -160,7 +160,7 @@ class GHUSDContract extends Component {
             Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
           </Typography>
         </ContractInfoContainer>
-        <SimpleField
+        <APIField
           title="Get Balance"
           description="Gets the balance for a given address."
           handleChange={this.handleChange}
