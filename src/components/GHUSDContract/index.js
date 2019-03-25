@@ -6,6 +6,7 @@ import GHUSD from '../../contracts/ghusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
+import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
 
 class GHUSDContract extends Component {
@@ -123,7 +124,7 @@ class GHUSDContract extends Component {
 
     return (
       <TabContentContainer>
-        <div className={classes.contractInfoContainer}>
+        <ContractInfoContainer>
           <Typography variant="h4" className={classes.heading}>
             GHUSD Contract
           </Typography>
@@ -139,7 +140,7 @@ class GHUSDContract extends Component {
           <Typography variant="subtitle1">
             Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
           </Typography>
-        </div>
+        </ContractInfoContainer>
         {/* {owner === currentAddress && currentAddress !== undefined && this.renderOwnerPart()} */}
         {this.renderOwnerPart()}
       </TabContentContainer>

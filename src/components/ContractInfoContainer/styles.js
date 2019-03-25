@@ -1,5 +1,5 @@
 const styles = theme => ({
-  heading: {
+  root: {
     marginBottom: theme.spacing.threeX,
   },
 });

@@ -5,6 +5,7 @@ import SimpleField from '../SimpleField';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
+import ContractInfoContainer from '../ContractInfoContainer';
 import ANS from '../../contracts/ans';
 
 class AddressNameService extends Component {
@@ -123,7 +124,7 @@ class AddressNameService extends Component {
 
     return (
       <TabContentContainer>
-        <div className={classes.contractInfoContainer}>
+        <ContractInfoContainer>
           <Typography variant="h4" className={classes.heading}>
             Address Name Service Contract
           </Typography>
@@ -133,7 +134,7 @@ class AddressNameService extends Component {
           <Typography variant="subtitle1">
             Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.
           </Typography>
-        </div>
+        </ContractInfoContainer>
         <SimpleField
           title="Resolve Name"
           description="Looks up the name and returns the assigned address (if set)."
