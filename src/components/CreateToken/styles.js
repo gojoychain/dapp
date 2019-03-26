@@ -6,10 +6,6 @@ export default theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  textField: {
-    width: 200,
-    marginBottom: theme.spacing.twoX,
-  },
   button: {
     height: 32,
     marginTop: theme.spacing.twoX,

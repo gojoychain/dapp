@@ -1,14 +1,11 @@
-import React, { Component, Fragment } from 'react';
-import {
-  withStyles,
-  Typography,
-  TextField,
-  Button,
-} from '@material-ui/core';
+import React, { Component } from 'react';
+import { withStyles, Typography, Button } from '@material-ui/core';
+import { isFinite } from 'lodash';
 
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
+import FormField from '../FormField';
 import web3 from '../../web3';
 import GRC223 from '../../contracts/grc223';
 import { toLowestDenom } from '../../utils/convert';
@@ -20,31 +17,28 @@ class CreateToken extends Component {
     decimals: '',
     totalSupply: '',
     owner: '',
-    response: 'resp',
+    txHash: '',
+    txError: '',
   };
 
   componentDidMount() {
-    // this.initState();
+    this.initState();
   }
 
-  componentDidUpdate(prevProps) {
-    // const { mmLoaded } = this.props;
-    // if (prevProps.mmLoaded !== mmLoaded) {
-    //   this.initState();
-    // }
+  initState = () => {
+    const { currentAddress } = this.props;
+    if (!currentAddress) {
+      return;
+    }
+    this.setState({ owner: currentAddress });
   }
-
-  // initState = async () => {
-  //   const { currentAddress } = this.props;
-  //   if (!currentAddress || !web3) return;
-
-  //   const owner = await GHUSD().methods.owner().call();
-  //   const ghusdBalance = await GHUSD().methods.balanceOf(currentAddress).call();
-  //   const balance = await web3.eth.getBalance(currentAddress);
-  //   this.setState({ owner, ghusdBalance, balance });
-  // }
 
   createToken = () => {
+    if (!this.isFormComplete()) {
+      return;
+    }
+
+    const { currentAddress } = this.props;
     const {
       name,
       symbol,
@@ -58,11 +52,15 @@ class CreateToken extends Component {
       [name, symbol, decimals, toLowestDenom(totalSupply, decimals), owner],
     ).substr(2);
 
-    // web3.eth.sendTransaction({
-    //   from: web3.eth.accounts[0],
-    //   gasLimit: 2000000,
-    //   data: GRC223.bytecode + encodedParams,
-    // });
+    web3.eth.sendTransaction({
+      from: currentAddress,
+      gasLimit: 2000000,
+      data: GRC223.bytecode + encodedParams,
+    }).on('transactionHash', (hash) => {
+      this.setState({ txHash: hash });
+    }).on('error', (err) => {
+      this.setState({ txError: err.message });
+    });
   }
 
   handleChange = name => (event) => {
@@ -70,6 +68,45 @@ class CreateToken extends Component {
       [name]: event.target.value,
     });
   };
+
+  validateName = () => {
+    const { name } = this.state;
+    return name;
+  }
+
+  validateSymbol = () => {
+    const { symbol } = this.state;
+    return symbol;
+  }
+
+  validateDecimals = () => {
+    const { decimals } = this.state;
+    try {
+      return decimals && isFinite(Number(decimals));
+    } catch (err) {
+      return false;
+    }
+  }
+
+  validateTotalSupply = () => {
+    const { totalSupply } = this.state;
+    try {
+      return totalSupply && isFinite(Number(totalSupply));
+    } catch (err) {
+      return false;
+    }
+  }
+
+  validateOwner = () => {
+    const { owner } = this.state;
+    return web3.utils.isAddress(owner);
+  }
+
+  isFormComplete = () => this.validateName()
+    && this.validateSymbol()
+    && this.validateDecimals()
+    && this.validateTotalSupply()
+    && this.validateOwner();
 
   renderForm = () => {
     const { classes } = this.props;
@@ -83,40 +120,40 @@ class CreateToken extends Component {
 
     return (
       <div className={classes.fieldsContainer}>
-        <TextField
+        <FormField
           id="name"
-          className={classes.textField}
           label="Name"
           value={name}
           onChange={this.handleChange('name')}
+          error={!this.validateName()}
         />
-        <TextField
+        <FormField
           id="symbol"
-          className={classes.textField}
           label="Symbol"
           value={symbol}
           onChange={this.handleChange('symbol')}
+          error={!this.validateSymbol()}
         />
-        <TextField
+        <FormField
           id="decimals"
-          className={classes.textField}
           label="Decimals"
           value={decimals}
           onChange={this.handleChange('decimals')}
+          error={!this.validateDecimals()}
         />
-        <TextField
+        <FormField
           id="totalSupply"
-          className={classes.textField}
           label="Total Supply"
           value={totalSupply}
           onChange={this.handleChange('totalSupply')}
+          error={!this.validateTotalSupply()}
         />
-        <TextField
+        <FormField
           id="owner"
-          className={classes.textField}
           label="Owner"
           value={owner}
           onChange={this.handleChange('owner')}
+          error={!this.validateOwner()}
         />
         <div>
           <Button
@@ -134,10 +171,21 @@ class CreateToken extends Component {
   }
 
   renderResponse = () => {
-    const { response } = this.state;
-    return response && (
+    const { txHash, txError } = this.state;
+
+    // Display error message if found
+    if (txError) {
+      return (
+        <Typography variant="subtitle2" color="error">
+          Error: {txError}
+        </Typography>
+      );
+    }
+
+    // Display tx hash
+    return txHash && (
       <Typography variant="subtitle2">
-        Transaction ID: {response}
+        Transaction ID: {txHash}
       </Typography>
     );
   }
