@@ -5,6 +5,7 @@ import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
+import GRC223 from '../../contracts/grc223';
 
 class CreateToken extends Component {
   state = {
