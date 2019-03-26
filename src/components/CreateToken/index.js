@@ -201,7 +201,7 @@ class CreateToken extends Component {
       <TabContentContainer>
         <ContractInfoContainer>
           <Typography variant="h4" className={classes.heading}>
-            Create GRC223 Token
+            Create GRC223 PreMinted Token
           </Typography>
         </ContractInfoContainer>
         {this.renderForm()}
