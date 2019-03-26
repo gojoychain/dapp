@@ -20,10 +20,6 @@
         "react"
     ],
     "rules": {
-      "react/prop-types": 0,
-      "react/jsx-filename-extension": [
-        1, { "extensions": [".js", ".jsx"] }
-      ],
       "no-multiple-empty-lines": [
         "error",
         { "max": 1, "maxEOF": 0 }
@@ -31,6 +27,14 @@
       "max-len": [
         "error", { "code": 140 }
       ],
-      "react/jsx-one-expression-per-line": 0
+      "import/prefer-default-export": [
+        "warn"
+      ],
+      "react/jsx-filename-extension": [
+        1,
+        { "extensions": [".js", ".jsx"] }
+      ],
+      "react/jsx-one-expression-per-line": 0,
+      "react/prop-types": 0
     }
 }
