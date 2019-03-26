@@ -11,8 +11,8 @@ class CreateToken extends Component {
   state = {
   };
 
-  async componentDidMount() {
-    this.initState();
+  componentDidMount() {
+    // this.initState();
   }
 
   componentDidUpdate(prevProps) {
