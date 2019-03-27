@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { withStyles, Paper, Typography } from '@material-ui/core';
-import SimpleField from '../SimpleField';
-import ans from '../../contracts/ans';
+import { withStyles, Typography } from '@material-ui/core';
+
+import APIField from '../APIField';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
+import TabContentContainer from '../TabContentContainer';
+import ContractInfoContainer from '../ContractInfoContainer';
+import ANS from '../../contracts/ans';
 
 class AddressNameService extends Component {
   state = {
@@ -22,19 +25,57 @@ class AddressNameService extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentAddress } = this.props;
-    if (prevProps.currentAddress !== currentAddress) {
+    const { mmLoaded } = this.props;
+    if (prevProps.mmLoaded !== mmLoaded) {
       this.initState();
     }
   }
 
   initState = async () => {
     const { currentAddress } = this.props;
-    if (!currentAddress) return;
-    const owner = await ans.methods.owner().call();
-    this.setState({
-      owner,
+    if (!currentAddress || !ANS()) return;
+
+    const owner = await ANS().methods.owner().call();
+    this.setState({ owner });
+  }
+
+  resolveAddress = async () => {
+    const { nameValue } = this.state;
+    const addressValue = await ANS().methods.resolveName(nameValue).call();
+    this.setState({ addressValue });
+  }
+
+  getMinLimit = async () => {
+    const { limitAddress } = this.state;
+    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
+    this.setState({ minLimit });
+  }
+
+  assignName = async () => {
+    const { currentAddress } = this.props;
+    const { newNameValue } = this.state;
+    await ANS().methods.assignName(newNameValue).send({ from: currentAddress });
+    this.setState({ nameValue: newNameValue });
+  }
+
+  setMinLimit = async () => {
+    const { currentAddress } = this.props;
+    const { limitAddress, newMinLimit } = this.state;
+    await ANS().methods.setMinLimit(limitAddress, newMinLimit).send({
+      from: currentAddress,
     });
+    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
+    this.setState({ minLimit });
+  }
+
+  transferOwnership = async () => {
+    const { currentAddress } = this.props;
+    const { newOwner } = this.state;
+    await ANS().methods.transferOwnership(newOwner).send({
+      from: currentAddress,
+    });
+    const owner = await ANS.methods.owner().call();
+    this.setState({ owner });
   }
 
   handleChange = name => (event) => {
@@ -43,122 +84,91 @@ class AddressNameService extends Component {
     });
   };
 
-  onResolveAddressSubmit = async () => {
-    const { nameValue } = this.state;
-    const addressValue = await ans.methods.resolveName(nameValue).call();
-    this.setState({ addressValue });
-  }
-
-  onAssignNameSubmit = async () => {
+  renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
-    const { newNameValue } = this.state;
-    await ans.methods.assignName(newNameValue).send({
-      from: currentAddress,
-    });
-    this.setState({ nameValue: newNameValue });
+    const { owner } = this.state;
+    return currentAddress && owner && currentAddress === owner
+      && (
+        <Fragment>
+          <APIField
+            title="Set Min Limit (Only Owner)"
+            description="Sets the minimum length for a given address."
+            handleChange={this.handleChange}
+            changeStateName="limitAddress"
+            onClickFunc={this.setMinLimit}
+            buttonText="Set"
+            label="Address"
+            secondInputLabel="Minimum Length"
+            secondInputChangeStateName="newMinLimit"
+          />
+          <APIField
+            title="Transfer Ownership (Only Owner)"
+            description="Transfers the contract ownership to the given address."
+            handleChange={this.handleChange}
+            changeStateName="newOwner"
+            onClickFunc={this.transferOwnership}
+            buttonText="Transfer"
+            label="Address"
+          />
+        </Fragment>
+      );
   }
-
-  onGetMinLimitSubmit = async () => {
-    const { limitAddress } = this.state;
-    const minLimit = await ans.methods.getMinLimit(limitAddress).call();
-    this.setState({ minLimit });
-  }
-
-  onSetMinLimitSubmit = async () => {
-    const { currentAddress } = this.props;
-    const { limitAddress, newMinLimit } = this.state;
-    await ans.methods.setMinLimit(limitAddress, newMinLimit).send({
-      from: currentAddress,
-    });
-    this.setState({ minLimit: await ans.methods.getMinLimit(limitAddress).call() });
-  }
-
-  onTransferAnsSubmit = async () => {
-    const { currentAddress } = this.props;
-    const { newOwner } = this.state;
-    await ans.methods.transferOwnership(newOwner).send({
-      from: currentAddress,
-    });
-    this.setState({ owner: await ans.methods.owner().call() });
-  }
-
-  renderOwnerPart = () => (
-    <Fragment>
-      <SimpleField
-        title="Set Min Limit"
-        handleChange={this.handleChange}
-        changeStateName="limitAddress"
-        value=""
-        onClickFunc={this.onSetMinLimitSubmit}
-        buttonText="Set"
-        label="Type address"
-        helperText=""
-        secondInputLabel="Minimum Length"
-        secondInputChangeStateName="newMinLimit"
-      />
-      <hr />
-      <SimpleField
-        title="Transfer ownership"
-        handleChange={this.handleChange}
-        changeStateName="newOwner"
-        value=""
-        onClickFunc={this.onTransferAnsSubmit}
-        buttonText="Transfer"
-        label="Type new address"
-        helperText=""
-      />
-      <hr />
-    </Fragment>
-  )
 
   render() {
-    const { owner, addressValue, minLimit } = this.state;
     const { classes, currentAddress } = this.props;
+    const { owner, addressValue, minLimit } = this.state;
+
+    if (!currentAddress) {
+      return <div />;
+    }
+
     return (
-      <Paper className={classes.root}>
-        <h1>Address Name Service Contract</h1>
-        <Typography variant="h5">This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.</Typography>
-        <Typography variant="h5">Your account address is <AddressWrapper>{currentAddress}</AddressWrapper>.</Typography>
-        <hr />
-        <SimpleField
-          title="Check name"
+      <TabContentContainer>
+        <ContractInfoContainer>
+          <Typography variant="h4" className={classes.heading}>
+            Address Name Service Contract
+          </Typography>
+          <Typography variant="subtitle1">
+            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+          </Typography>
+        </ContractInfoContainer>
+        <APIField
+          title="Resolve Name"
+          description="Looks up the name and returns the assigned address (if set)."
           handleChange={this.handleChange}
           changeStateName="nameValue"
-          value={<AddressWrapper>{addressValue}</AddressWrapper>}
-          onClickFunc={this.onResolveAddressSubmit}
+          value={addressValue && <AddressWrapper>{addressValue}</AddressWrapper>}
+          onClickFunc={this.resolveAddress}
           buttonText="Check"
-          label="Type name"
+          label="Name"
           helperText="Address is "
         />
-        <hr />
-        {
-          currentAddress && (
-            <SimpleField
-              title="Set Name"
-              handleChange={this.handleChange}
-              changeStateName="newNameValue"
-              onClickFunc={this.onAssignNameSubmit}
-              buttonText="Set"
-              label="Type name"
-              helperText=""
-              value=""
-            />
-          )
-        }
-        <hr />
-        <SimpleField
+        <APIField
           title="Check Min Limit"
+          description="Returns the minimum length for a given address."
           handleChange={this.handleChange}
           changeStateName="limitAddress"
           value={minLimit}
-          onClickFunc={this.onGetMinLimitSubmit}
+          onClickFunc={this.getMinLimit}
           buttonText="Check"
-          label="Type Address"
-          helperText="Min Limit Length "
+          label="Address"
+          helperText="Min Limit is "
         />
-        <hr />
-        {currentAddress === owner && currentAddress !== undefined && this.renderOwnerPart()}
-      </Paper>
+        {
+          currentAddress && (
+            <APIField
+              title="Assign Name"
+              description="Assigns the name for the current address."
+              handleChange={this.handleChange}
+              changeStateName="newNameValue"
+              onClickFunc={this.assignName}
+              buttonText="Assign"
+              label="Name"
+            />
+          )
+        }
+        {this.renderOwnerFunctions()}
+      </TabContentContainer>
     );
   }
 }

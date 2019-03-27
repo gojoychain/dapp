@@ -1,5 +1,5 @@
 export default theme => ({
-  heading: {
+  root: {
     marginBottom: theme.spacing.threeX,
   },
 });
