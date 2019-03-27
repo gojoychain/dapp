@@ -12,10 +12,12 @@ import { CHAIN_ID } from '../../config';
 import GHUSDContract from '../GHUSDContract';
 import AddressNameService from '../AddressNameService';
 import MiningContracts from '../MiningContracts';
+import CreateToken from '../CreateToken';
 
 const TAB_ANS = 0;
 const TAB_GHUSD = 1;
 const TAB_MINING_CONTRACTS = 2;
+const TAB_CREATE_TOKEN = 3;
 
 class MainContainer extends Component {
   state = {
@@ -122,6 +124,10 @@ class MainContainer extends Component {
               label="Mining Contracts"
               hidden={selectedTab !== TAB_MINING_CONTRACTS}
             />
+            <Tab
+              label="Create Token"
+              hidden={selectedTab !== TAB_CREATE_TOKEN}
+            />
             <CurrentUser currentAddress={currentAddress} network={network} />
           </Tabs>
         </AppBar>
@@ -144,6 +150,14 @@ class MainContainer extends Component {
         {selectedTab === TAB_MINING_CONTRACTS && (
           <TabContainer>
             <MiningContracts
+              currentAddress={currentAddress}
+              mmLoaded={mmLoaded}
+            />
+          </TabContainer>
+        )}
+        {selectedTab === TAB_CREATE_TOKEN && (
+          <TabContainer>
+            <CreateToken
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
             />
