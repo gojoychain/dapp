@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
   PROVIDER: {
-    MAINNET: 'https://api.ghuchain.com',
-    TESTNET: 'https://testapi.ghuchain.com',
+    MAINNET: 'https://api.gojoychain.com',
+    TESTNET: 'https://testapi.gojoychain.com',
   },
   CHAIN_ID: {
     MAINNET: '18',
