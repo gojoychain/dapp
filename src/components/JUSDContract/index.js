@@ -154,7 +154,7 @@ class JUSDContract extends Component {
             Your current JUSD balance is {web3.utils.fromWei(jusdBalance, 'ether')} JUSD.
           </Typography>
           <Typography variant="subtitle1">
-            Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
+            Your current JOY balance is {web3.utils.fromWei(balance, 'ether')} JOY.
           </Typography>
         </ContractInfoContainer>
         <APIField
