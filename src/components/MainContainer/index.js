@@ -5,7 +5,7 @@ import {
   Tab,
   Typography,
   withStyles,
-} from '../JUSDContract/node_modules/@material-ui/core';
+} from '@material-ui/core';
 
 import styles from './styles';
 import { CHAIN_ID } from '../../config';

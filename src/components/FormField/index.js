@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, withStyles } from '../JUSDContract/node_modules/@material-ui/core';
+import { TextField, withStyles } from '@material-ui/core';
 
 import styles from './styles';
 

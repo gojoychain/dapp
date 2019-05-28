@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, Typography, Button } from '../JUSDContract/node_modules/@material-ui/core';
+import { withStyles, Typography, Button } from '@material-ui/core';
 import { isFinite } from 'lodash';
 
 import styles from './styles';

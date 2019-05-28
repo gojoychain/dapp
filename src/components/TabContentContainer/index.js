@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, Paper } from '../JUSDContract/node_modules/@material-ui/core';
+import { withStyles, Paper } from '@material-ui/core';
 
 import styles from './styles';
 

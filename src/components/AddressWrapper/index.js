@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '../JUSDContract/node_modules/@material-ui/core';
+import { withStyles } from '@material-ui/core';
 
 const styles = () => ({
   address: {
