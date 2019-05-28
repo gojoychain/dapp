@@ -98,8 +98,8 @@ class MiningContract extends Component {
       const times = Math.floor((currentBlockNumber - lastWithdrawBlock) / withdrawInterval);
       const totalWithdrawAmount = times * withdrawAmount;
       checkWithdrawText = `
-        You can withdraw ${totalWithdrawAmount} GHU in total. 
-        You can withdraw ${times} times for ${withdrawAmount} GHU each.`;
+        You can withdraw ${totalWithdrawAmount} JOY in total. 
+        You can withdraw ${times} times for ${withdrawAmount} JOY each.`;
     } else {
       const nextWithdrawBlock = lastWithdrawBlock + withdrawInterval;
       checkWithdrawText = `

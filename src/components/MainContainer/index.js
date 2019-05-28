@@ -9,13 +9,13 @@ import {
 
 import styles from './styles';
 import { CHAIN_ID } from '../../config';
-import GHUSDContract from '../GHUSDContract';
+import JUSDContract from '../JUSDContract';
 import AddressNameService from '../AddressNameService';
 import MiningContracts from '../MiningContracts';
 import CreateToken from '../CreateToken';
 
 const TAB_ANS = 0;
-const TAB_GHUSD = 1;
+const TAB_JUSD = 1;
 const TAB_MINING_CONTRACTS = 2;
 const TAB_CREATE_TOKEN = 3;
 
@@ -117,8 +117,8 @@ class MainContainer extends Component {
               hidden={selectedTab !== TAB_ANS}
             />
             <Tab
-              label="GHUSD"
-              hidden={selectedTab !== TAB_GHUSD}
+              label="JUSD"
+              hidden={selectedTab !== TAB_JUSD}
             />
             <Tab
               label="Mining Contracts"
@@ -139,9 +139,9 @@ class MainContainer extends Component {
             />
           </TabContainer>
         )}
-        {selectedTab === TAB_GHUSD && (
+        {selectedTab === TAB_JUSD && (
           <TabContainer>
-            <GHUSDContract
+            <JUSDContract
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
             />

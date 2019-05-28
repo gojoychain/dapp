@@ -2,18 +2,18 @@ import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
 import APIField from '../APIField';
-import GHUSD from '../../contracts/ghusd';
+import JUSD from '../../contracts/jusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
 
-class GHUSDContract extends Component {
+class JUSDContract extends Component {
   state = {
     owner: '',
     newOwner: '',
-    ghusdBalance: '',
+    jusdBalance: '',
     balance: '',
     balanceOfAddr: '',
     balanceOf: '',
@@ -34,12 +34,12 @@ class GHUSDContract extends Component {
 
   initState = async () => {
     const { currentAddress } = this.props;
-    if (!currentAddress || !web3 || !GHUSD()) return;
+    if (!currentAddress || !web3 || !JUSD()) return;
 
-    const owner = await GHUSD().methods.owner().call();
-    const ghusdBalance = await GHUSD().methods.balanceOf(currentAddress).call();
+    const owner = await JUSD().methods.owner().call();
+    const jusdBalance = await JUSD().methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
-    this.setState({ owner, ghusdBalance, balance });
+    this.setState({ owner, jusdBalance, balance });
   }
 
   handleChange = name => (event) => {
@@ -50,7 +50,7 @@ class GHUSDContract extends Component {
 
   balanceOf = async () => {
     const { balanceOfAddr } = this.state;
-    const balanceOf = await GHUSD().methods.balanceOf(balanceOfAddr).call();
+    const balanceOf = await JUSD().methods.balanceOf(balanceOfAddr).call();
     this.setState({
       balanceOf: web3.utils.fromWei(balanceOf, 'ether'),
     });
@@ -59,32 +59,32 @@ class GHUSDContract extends Component {
   mintTokens = async () => {
     const { currentAddress } = this.props;
     const { mintValue } = this.state;
-    await GHUSD().methods
+    await JUSD().methods
       .mintTokens(currentAddress, web3.utils.toWei(mintValue, 'ether'))
       .send({ from: currentAddress });
     this.setState({
-      ghusdBalance: await GHUSD().methods.balanceOf(currentAddress).call(),
+      jusdBalance: await JUSD().methods.balanceOf(currentAddress).call(),
     });
   }
 
   burnTokens = async () => {
     const { currentAddress } = this.props;
     const { burnValue } = this.state;
-    await GHUSD().methods
+    await JUSD().methods
       .burnTokens(currentAddress, web3.utils.toWei(burnValue, 'ether'))
       .send({ from: currentAddress });
     this.setState({
-      ghusdBalance: await GHUSD().methods.balanceOf(currentAddress).call(),
+      jusdBalance: await JUSD().methods.balanceOf(currentAddress).call(),
     });
   }
 
   transferOwnership = async () => {
     const { currentAddress } = this.props;
     const { newOwner } = this.state;
-    await GHUSD().methods.transferOwnership(newOwner).send({
+    await JUSD().methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    this.setState({ owner: await GHUSD().methods.owner().call() });
+    this.setState({ owner: await JUSD().methods.owner().call() });
   }
 
   renderOwnerFunctions = () => {
@@ -101,7 +101,7 @@ class GHUSDContract extends Component {
           buttonText="Mint"
           label="Amount"
           helperText=""
-          adornment="GHUSD"
+          adornment="JUSD"
         />
         <APIField
           title="Burn (Only Owner)"
@@ -112,7 +112,7 @@ class GHUSDContract extends Component {
           buttonText="Burn"
           label="Amount"
           helperText=""
-          adornment="GHUSD"
+          adornment="JUSD"
         />
         <APIField
           title="Transfer Ownership (Only Owner)"
@@ -132,7 +132,7 @@ class GHUSDContract extends Component {
     const { classes, currentAddress } = this.props;
     const {
       owner,
-      ghusdBalance,
+      jusdBalance,
       balance,
       balanceOf,
     } = this.state;
@@ -145,16 +145,16 @@ class GHUSDContract extends Component {
       <TabContentContainer>
         <ContractInfoContainer>
           <Typography variant="h4" className={classes.heading}>
-            GHUSD Contract
+            JUSD Contract
           </Typography>
           <Typography variant="subtitle1">
             This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
           </Typography>
           <Typography variant="subtitle1">
-            Your current GHUSD balance is {web3.utils.fromWei(ghusdBalance, 'ether')} GHUSD.
+            Your current JUSD balance is {web3.utils.fromWei(jusdBalance, 'ether')} JUSD.
           </Typography>
           <Typography variant="subtitle1">
-            Your current GEC balance is {web3.utils.fromWei(balance, 'ether')} GEC.
+            Your current JOY balance is {web3.utils.fromWei(balance, 'ether')} JOY.
           </Typography>
         </ContractInfoContainer>
         <APIField
@@ -174,4 +174,4 @@ class GHUSDContract extends Component {
   }
 }
 
-export default withStyles(styles)(GHUSDContract);
+export default withStyles(styles)(JUSDContract);
