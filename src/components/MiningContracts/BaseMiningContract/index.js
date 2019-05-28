@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography, withStyles } from '../../JUSDContract/node_modules/@material-ui/core';
 
 import styles from './styles';
 import APIField from '../../APIField';

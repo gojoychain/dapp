@@ -5,7 +5,7 @@ import {
   Button,
   InputAdornment,
   withStyles,
-} from '@material-ui/core';
+} from '../JUSDContract/node_modules/@material-ui/core';
 
 import styles from './styles';
 
