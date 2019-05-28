@@ -7,7 +7,7 @@ import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import FormField from '../FormField';
 import web3 from '../../web3';
-import GRC223 from '../../contracts/grc223';
+import JRC223 from '../../contracts/jrc223';
 import { toLowestDenom } from '../../utils/convert';
 
 class CreateToken extends Component {
@@ -55,7 +55,7 @@ class CreateToken extends Component {
     web3.eth.sendTransaction({
       from: currentAddress,
       gasLimit: 2000000,
-      data: GRC223.bytecode + encodedParams,
+      data: JRC223.bytecode + encodedParams,
     }).on('transactionHash', (hash) => {
       this.setState({ txHash: hash });
     }).on('error', (err) => {
@@ -201,7 +201,7 @@ class CreateToken extends Component {
       <TabContentContainer>
         <ContractInfoContainer>
           <Typography variant="h4" className={classes.heading}>
-            Create GRC223 PreMinted Token
+            Create JRC223 PreMinted Token
           </Typography>
         </ContractInfoContainer>
         {this.renderForm()}
