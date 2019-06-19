@@ -7,6 +7,7 @@ import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
 import ContractInfoContainer from '../../ContractInfoContainer';
 import web3 from '../../../web3';
+import { addressesEqual } from '../../../utils';
 
 class MiningContract extends Component {
   state = {
@@ -112,7 +113,7 @@ class MiningContract extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner, canWithdraw, checkWithdrawText } = this.state;
-    return currentAddress && owner && currentAddress === owner && (
+    return addressesEqual(currentAddress, owner) && (
       <Fragment>
         <APIField
           title={`Check Withdrawable Status ${canWithdraw ? ' & Withdraw' : ''}`}

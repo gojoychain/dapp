@@ -8,6 +8,7 @@ import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
+import { addressesEqual } from '../../utils';
 
 class JUSDContract extends Component {
   state = {
@@ -90,7 +91,7 @@ class JUSDContract extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    return currentAddress && owner && currentAddress === owner && (
+    return addressesEqual(currentAddress, owner) && (
       <Fragment>
         <APIField
           title="Mint (Only Owner)"

@@ -7,6 +7,7 @@ import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import ANS from '../../contracts/ans';
+import { addressesEqual } from '../../utils';
 
 class AddressNameService extends Component {
   state = {
@@ -87,31 +88,30 @@ class AddressNameService extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    return currentAddress && owner && currentAddress === owner
-      && (
-        <Fragment>
-          <APIField
-            title="Set Min Limit (Only Owner)"
-            description="Sets the minimum length for a given address."
-            handleChange={this.handleChange}
-            changeStateName="limitAddress"
-            onClickFunc={this.setMinLimit}
-            buttonText="Set"
-            label="Address"
-            secondInputLabel="Minimum Length"
-            secondInputChangeStateName="newMinLimit"
-          />
-          <APIField
-            title="Transfer Ownership (Only Owner)"
-            description="Transfers the contract ownership to the given address."
-            handleChange={this.handleChange}
-            changeStateName="newOwner"
-            onClickFunc={this.transferOwnership}
-            buttonText="Transfer"
-            label="Address"
-          />
-        </Fragment>
-      );
+    return addressesEqual(currentAddress, owner) && (
+      <Fragment>
+        <APIField
+          title="Set Min Limit (Only Owner)"
+          description="Sets the minimum length for a given address."
+          handleChange={this.handleChange}
+          changeStateName="limitAddress"
+          onClickFunc={this.setMinLimit}
+          buttonText="Set"
+          label="Address"
+          secondInputLabel="Minimum Length"
+          secondInputChangeStateName="newMinLimit"
+        />
+        <APIField
+          title="Transfer Ownership (Only Owner)"
+          description="Transfers the contract ownership to the given address."
+          handleChange={this.handleChange}
+          changeStateName="newOwner"
+          onClickFunc={this.transferOwnership}
+          buttonText="Transfer"
+          label="Address"
+        />
+      </Fragment>
+    );
   }
 
   render() {
