@@ -91,6 +91,8 @@ class JUSDContract extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
+    console.log('NAKA: JUSDContract -> renderOwnerFunctions -> currentAddress', currentAddress);
+    console.log('NAKA: JUSDContract -> renderOwnerFunctions -> owner', owner);
     return addressesEqual(currentAddress, owner) && (
       <Fragment>
         <APIField
