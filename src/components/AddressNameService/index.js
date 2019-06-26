@@ -48,7 +48,7 @@ class AddressNameService extends Component {
 
   getMinLimit = async () => {
     const { limitAddress } = this.state;
-    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
+    const minLimit = await ANS().methods.getMinLimit(limitAddress.toLowerCase()).call();
     this.setState({ minLimit });
   }
 

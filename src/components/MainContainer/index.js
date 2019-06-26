@@ -42,8 +42,9 @@ class MainContainer extends Component {
       }
 
       if (accounts[0]) {
-        console.info('Found Metamask account:', accounts[0]);
-        this.setState({ currentAddress: accounts[0] }, () => {
+        const addr = accounts[0].toLowerCase();
+        console.info('Found Metamask account:', addr);
+        this.setState({ currentAddress: addr }, () => {
           this.toggleLoaded();
         });
       }
