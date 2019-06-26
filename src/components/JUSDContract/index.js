@@ -39,6 +39,7 @@ class JUSDContract extends Component {
     if (!currentAddress || !web3 || !JUSD()) return;
 
     const owner = await JUSD().methods.owner().call();
+    console.log('NAKA: JUSDContract -> initState -> owner', owner);
     const jusdBalance = await JUSD().methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
@@ -136,9 +137,6 @@ class JUSDContract extends Component {
       balance,
       balanceOf,
     } = this.state;
-    console.log('NAKA: JUSDContract -> render -> jusdBalance', jusdBalance);
-    console.log('NAKA: JUSDContract -> render -> balance', balance);
-    console.log('NAKA: JUSDContract -> render -> balanceOf', balanceOf);
 
     if (!currentAddress || !web3) {
       return <div />;
