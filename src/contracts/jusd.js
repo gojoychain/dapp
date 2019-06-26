@@ -9,7 +9,6 @@ let mainnet;
 let testnet;
 
 export default () => {
-  console.log('JUSD web3.givenProvider.networkVersion', web3.givenProvider.networkVersion);
   switch (web3.givenProvider.networkVersion) {
     case CHAIN_ID.MAINNET: {
       if (!mainnet) {

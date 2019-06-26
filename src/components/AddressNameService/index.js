@@ -65,8 +65,6 @@ class AddressNameService extends Component {
     await ANS().methods.setMinLimit(limitAddress, newMinLimit).send({
       from: currentAddress,
     });
-    const minLimit = await ANS().methods.getMinLimit(limitAddress).call();
-    this.setState({ minLimit });
   }
 
   transferOwnership = async () => {
@@ -75,8 +73,6 @@ class AddressNameService extends Component {
     await ANS().methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    const owner = await ANS.methods.owner().call();
-    this.setState({ owner });
   }
 
   handleChange = name => (event) => {

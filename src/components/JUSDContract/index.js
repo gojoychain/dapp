@@ -39,7 +39,6 @@ class JUSDContract extends Component {
     if (!currentAddress || !web3 || !JUSD()) return;
 
     const owner = await JUSD().methods.owner().call();
-    console.log('NAKA: JUSDContract -> initState -> owner', owner);
     const jusdBalance = await JUSD().methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
@@ -91,7 +90,7 @@ class JUSDContract extends Component {
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    return addressesEqual(currentAddress, owner) && (
+    return (
       <Fragment>
         <APIField
           title="Mint (Only Owner)"
