@@ -42,8 +42,8 @@ class JUSDContract extends Component {
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
       owner,
-      jusdBalance: jusdBalance.toString(10),
-      balance: balance.toString(10),
+      jusdBalance: jusdBalance && jusdBalance.toString(10),
+      balance: balance && balance.toString(10),
     });
   }
 
@@ -53,7 +53,7 @@ class JUSDContract extends Component {
     });
   };
 
-  balanceOf = async () => {
+  checkBalanceOf = async () => {
     const { balanceOfAddr } = this.state;
     const balanceOf = await JUSD().methods.balanceOf(balanceOfAddr.toLowerCase())
       .call();
