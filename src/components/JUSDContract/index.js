@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
+import { isUndefined, isNull } from 'lodash';
 
 import APIField from '../APIField';
 import JUSD from '../../contracts/jusd';
@@ -42,7 +43,7 @@ class JUSDContract extends Component {
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
       owner,
-      jusdBalance: jusdBalance === null || jusdBalance === 'undefined' ? '' : jusdBalance.toString(10),
+      jusdBalance: isUndefined(jusdBalance) || isNull(jusdBalance) ? '' : jusdBalance.toString(10),
       balance: balance && balance.toString(10),
     });
   }
