@@ -42,7 +42,7 @@ class JUSDContract extends Component {
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
       owner,
-      jusdBalance: jusdBalance && jusdBalance.toString(10),
+      jusdBalance: jusdBalance === null || jusdBalance === 'undefined' ? '' : jusdBalance.toString(10),
       balance: balance && balance.toString(10),
     });
   }
