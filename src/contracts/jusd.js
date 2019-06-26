@@ -13,7 +13,6 @@ export default () => {
     case CHAIN_ID.MAINNET: {
       if (!mainnet) {
         mainnet = new web3.eth.Contract(abi, mainnetAddr);
-        console.log(mainnet);
       }
       return mainnet;
     }
