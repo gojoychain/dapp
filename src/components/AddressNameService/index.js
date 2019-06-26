@@ -48,7 +48,8 @@ class AddressNameService extends Component {
 
   getMinLimit = async () => {
     const { limitAddress } = this.state;
-    const minLimit = await ANS().methods.getMinLimit(limitAddress.toLowerCase()).call();
+    const minLimit = await ANS().methods
+      .getMinLimit(limitAddress.toLowerCase()).call();
     this.setState({ minLimit });
   }
 
@@ -62,17 +63,15 @@ class AddressNameService extends Component {
   setMinLimit = async () => {
     const { currentAddress } = this.props;
     const { limitAddress, newMinLimit } = this.state;
-    await ANS().methods.setMinLimit(limitAddress, newMinLimit).send({
-      from: currentAddress,
-    });
+    await ANS().methods
+      .setMinLimit(limitAddress.toLowerCase(), newMinLimit)
+      .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
     const { currentAddress } = this.props;
     const { newOwner } = this.state;
-    await ANS().methods.transferOwnership(newOwner).send({
-      from: currentAddress,
-    });
+    await ANS().methods.transferOwnership(newOwner).send({ from: currentAddress });
   }
 
   handleChange = name => (event) => {
