@@ -51,7 +51,8 @@ class JUSDContract extends Component {
 
   balanceOf = async () => {
     const { balanceOfAddr } = this.state;
-    const balanceOf = await JUSD().methods.balanceOf(balanceOfAddr).call();
+    const balanceOf = await JUSD().methods.balanceOf(balanceOfAddr.toLowerCase())
+      .call();
     this.setState({
       balanceOf: web3.utils.fromWei(balanceOf, 'ether'),
     });
