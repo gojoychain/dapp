@@ -40,7 +40,11 @@ class JUSDContract extends Component {
     const owner = await JUSD().methods.owner().call();
     const jusdBalance = await JUSD().methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
-    this.setState({ owner, jusdBalance, balance });
+    this.setState({
+      owner,
+      jusdBalance: jusdBalance.toString(10),
+      balance: balance.toString(10),
+    });
   }
 
   handleChange = name => (event) => {
@@ -64,9 +68,6 @@ class JUSDContract extends Component {
     await JUSD().methods
       .mintTokens(currentAddress, web3.utils.toWei(mintValue, 'ether'))
       .send({ from: currentAddress });
-    this.setState({
-      jusdBalance: await JUSD().methods.balanceOf(currentAddress).call(),
-    });
   }
 
   burnTokens = async () => {
@@ -75,9 +76,6 @@ class JUSDContract extends Component {
     await JUSD().methods
       .burnTokens(currentAddress, web3.utils.toWei(burnValue, 'ether'))
       .send({ from: currentAddress });
-    this.setState({
-      jusdBalance: await JUSD().methods.balanceOf(currentAddress).call(),
-    });
   }
 
   transferOwnership = async () => {
@@ -86,14 +84,11 @@ class JUSDContract extends Component {
     await JUSD().methods.transferOwnership(newOwner).send({
       from: currentAddress,
     });
-    this.setState({ owner: await JUSD().methods.owner().call() });
   }
 
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    console.log('NAKA: JUSDContract -> renderOwnerFunctions -> currentAddress', currentAddress);
-    console.log('NAKA: JUSDContract -> renderOwnerFunctions -> owner', owner);
     return addressesEqual(currentAddress, owner) && (
       <Fragment>
         <APIField
