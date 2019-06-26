@@ -7,7 +7,7 @@ import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
 import ContractInfoContainer from '../../ContractInfoContainer';
 import web3 from '../../../web3';
-import { addressesEqual } from '../../../utils';
+import { addressesEqual, toDecimalString } from '../../../utils';
 
 class MiningContract extends Component {
   state = {
@@ -38,26 +38,25 @@ class MiningContract extends Component {
 
     const currentBlockNumber = await web3.eth.getBlockNumber();
     const owner = await contract.methods.owner().call();
-    const withdrawInterval = Number(await contract.methods.withdrawInterval().call());
-    const withdrawAmount = web3.utils
-      .fromWei(await contract.methods.withdrawAmount().call(), 'ether');
+    const withdrawInterval = await contract.methods.withdrawInterval().call();
+    const withdrawAmount = await contract.methods.withdrawAmount().call();
+    await this.checkWithdrawStatus();
+
     this.setState({
       currentBlockNumber,
       owner,
-      withdrawInterval,
-      withdrawAmount,
+      withdrawInterval: Number(withdrawInterval),
+      withdrawAmount: web3.utils.fromWei(toDecimalString(withdrawAmount), 'ether'),
     });
-
-    await this.checkWithdrawStatus();
   }
 
   checkWithdrawStatus = async () => {
     const { contract } = this.props;
-    const lastWithdrawBlock = Number(await contract.methods.lastWithdrawBlock().call());
-    const currentBlockNumber = Number(await web3.eth.getBlockNumber());
+    const lastWithdrawBlock = await contract.methods.lastWithdrawBlock().call();
+    const currentBlockNumber = await web3.eth.getBlockNumber();
     this.setState({
-      currentBlockNumber,
-      lastWithdrawBlock,
+      currentBlockNumber: Number(currentBlockNumber),
+      lastWithdrawBlock: Number(lastWithdrawBlock),
     }, () => {
       this.renderWithdrawLabelText();
     });
@@ -73,9 +72,8 @@ class MiningContract extends Component {
   transferOwnership = async () => {
     const { contract, currentAddress } = this.props;
     const { newOwner } = this.state;
-    await contract.methods.transferOwnership(newOwner).send({
-      from: currentAddress,
-    });
+    await contract.methods.transferOwnership(newOwner.toLowerCase())
+      .send({ from: currentAddress });
     this.setState({ owner: await contract.methods.owner().call() });
   }
 
