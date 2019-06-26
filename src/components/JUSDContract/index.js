@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
-import { isUndefined, isNull } from 'lodash';
 
 import APIField from '../APIField';
 import JUSD from '../../contracts/jusd';
@@ -9,7 +8,7 @@ import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
 import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
-import { addressesEqual } from '../../utils';
+import { addressesEqual, toDecimalString } from '../../utils';
 
 class JUSDContract extends Component {
   state = {
@@ -43,8 +42,8 @@ class JUSDContract extends Component {
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
       owner,
-      jusdBalance: isUndefined(jusdBalance) || isNull(jusdBalance) ? '' : jusdBalance.toString(10),
-      balance: balance && balance.toString(10),
+      jusdBalance: toDecimalString(jusdBalance),
+      balance: toDecimalString(balance),
     });
   }
 
@@ -54,12 +53,12 @@ class JUSDContract extends Component {
     });
   };
 
-  checkBalanceOf = async () => {
+  balanceOf = async () => {
     const { balanceOfAddr } = this.state;
-    const balanceOf = await JUSD().methods.balanceOf(balanceOfAddr.toLowerCase())
+    const balance = await JUSD().methods.balanceOf(balanceOfAddr.toLowerCase())
       .call();
     this.setState({
-      balanceOf: web3.utils.fromWei(balanceOf, 'ether'),
+      balanceOf: web3.utils.fromWei(toDecimalString(balance), 'ether'),
     });
   }
 
@@ -67,7 +66,7 @@ class JUSDContract extends Component {
     const { currentAddress } = this.props;
     const { mintValue } = this.state;
     await JUSD().methods
-      .mintTokens(currentAddress, web3.utils.toWei(mintValue, 'ether'))
+      .mint(currentAddress, web3.utils.toWei(mintValue, 'ether'))
       .send({ from: currentAddress });
   }
 
@@ -75,22 +74,22 @@ class JUSDContract extends Component {
     const { currentAddress } = this.props;
     const { burnValue } = this.state;
     await JUSD().methods
-      .burnTokens(currentAddress, web3.utils.toWei(burnValue, 'ether'))
+      .burn(currentAddress, web3.utils.toWei(burnValue, 'ether'))
       .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
     const { currentAddress } = this.props;
     const { newOwner } = this.state;
-    await JUSD().methods.transferOwnership(newOwner).send({
-      from: currentAddress,
-    });
+    await JUSD().methods.transferOwnership(newOwner)
+      .send({ from: currentAddress });
   }
 
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
-    return (
+
+    return addressesEqual(currentAddress, owner) && (
       <Fragment>
         <APIField
           title="Mint (Only Owner)"
