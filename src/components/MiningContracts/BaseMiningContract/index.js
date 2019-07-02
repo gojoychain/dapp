@@ -6,6 +6,7 @@ import APIField from '../../APIField';
 import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
 import ContractInfoContainer from '../../ContractInfoContainer';
+import NotDeployedNotice from '../../NotDeployedNotice';
 import web3 from '../../../web3';
 import { addressesEqual, toDecimalString } from '../../../utils';
 
@@ -144,11 +145,15 @@ class MiningContract extends Component {
   }
 
   render() {
-    const { classes, contract, currentAddress, title } = this.props;
-    console.log('NAKA: MiningContract -> render -> contract', contract);
+    const {
+      classes,
+      contract,
+      currentAddress,
+      title,
+    } = this.props;
     const { owner, receiver } = this.state;
 
-    if (!contract || !currentAddress || !web3) {
+    if (!currentAddress || !web3) {
       return <div />;
     }
 
@@ -158,15 +163,25 @@ class MiningContract extends Component {
           <Typography variant="h4" className={classes.heading}>
             {title}
           </Typography>
-          <Typography variant="subtitle1">
-            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
-          </Typography>
-          <Typography variant="subtitle1">
-            The receiver is <AddressWrapper>{receiver}</AddressWrapper>.
-          </Typography>
+          {contract ? (
+            <Fragment>
+              <Typography variant="subtitle1">
+                This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+              </Typography>
+              <Typography variant="subtitle1">
+                The receiver is <AddressWrapper>{receiver}</AddressWrapper>.
+              </Typography>
+            </Fragment>
+          ) : (
+            <NotDeployedNotice />
+          )}
         </ContractInfoContainer>
-        {this.renderFunctions()}
-        {this.renderOwnerFunctions()}
+        {contract && (
+          <Fragment>
+            {this.renderFunctions()}
+            {this.renderOwnerFunctions()}
+          </Fragment>
+        )}
       </TabContentContainer>
     );
   }
