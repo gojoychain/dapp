@@ -18,8 +18,6 @@ class MiningContract extends Component {
     owner: '',
     receiver: '',
     newOwner: '',
-    canWithdraw: false,
-    checkWithdrawText: '',
   };
 
   componentDidMount() {
@@ -60,16 +58,12 @@ class MiningContract extends Component {
     this.setState({
       currentBlockNumber: Number(currentBlockNumber),
       lastWithdrawBlock: lastWithdrawBlock.toNumber(),
-    }, () => {
-      this.renderWithdrawLabelText();
     });
   }
 
   withdraw = async () => {
     const { contract, currentAddress } = this.props;
     await contract.methods.withdraw().send({ from: currentAddress });
-    await this.checkWithdrawStatus();
-    this.renderWithdrawLabelText();
   }
 
   transferOwnership = async () => {
@@ -86,18 +80,15 @@ class MiningContract extends Component {
     });
   };
 
-  renderWithdrawLabelText = () => {
+  createWithdrawLabelText = () => {
     const {
       withdrawInterval,
       withdrawAmount,
       currentBlockNumber,
       lastWithdrawBlock,
     } = this.state;
-    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> currentBlockNumber', currentBlockNumber);
-    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> withdrawInterval', withdrawInterval);
-    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> lastWithdrawBlock', lastWithdrawBlock);
-    const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
 
+    const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
     let checkWithdrawText;
     if (canWithdraw) {
       const times = Math.floor((currentBlockNumber - lastWithdrawBlock) / withdrawInterval);
@@ -111,11 +102,12 @@ class MiningContract extends Component {
         You cannot withdraw now. 
         The next withdraw block number is ${nextWithdrawBlock}.`;
     }
-    this.setState({ canWithdraw, checkWithdrawText });
+    return { canWithdraw, checkWithdrawText };
   }
 
   renderFunctions = () => {
-    const { canWithdraw, checkWithdrawText } = this.state;
+    const { canWithdraw, checkWithdrawText } = this.createWithdrawLabelText();
+
     return (
       <Fragment>
         <APIField
