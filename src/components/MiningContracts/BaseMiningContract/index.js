@@ -88,7 +88,9 @@ class MiningContract extends Component {
       lastWithdrawBlock,
     } = this.state;
 
-    const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
+    const canWithdraw = (currentBlockNumber && lastWithdrawBlock && withdrawInterval)
+      ? Boolean(currentBlockNumber - lastWithdrawBlock >= withdrawInterval)
+      : false;
     let checkWithdrawText;
     if (canWithdraw) {
       const times = Math.floor((currentBlockNumber - lastWithdrawBlock) / withdrawInterval);
@@ -142,10 +144,11 @@ class MiningContract extends Component {
   }
 
   render() {
-    const { classes, currentAddress, title } = this.props;
+    const { classes, contract, currentAddress, title } = this.props;
+    console.log('NAKA: MiningContract -> render -> contract', contract);
     const { owner, receiver } = this.state;
 
-    if (!currentAddress || !web3) {
+    if (!contract || !currentAddress || !web3) {
       return <div />;
     }
 

@@ -12,13 +12,13 @@ let testnet;
 export default () => {
   switch (web3.givenProvider.networkVersion) {
     case CHAIN_ID.MAINNET: {
-      if (!mainnet) {
+      if (!mainnet && mainnetAddr) {
         mainnet = new web3.eth.Contract(abi, mainnetAddr);
       }
       return mainnet;
     }
     case CHAIN_ID.TESTNET: {
-      if (!testnet) {
+      if (!testnet && testnetAddr) {
         testnet = new web3.eth.Contract(abi, testnetAddr);
       }
       return testnet;
