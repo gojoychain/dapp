@@ -16,6 +16,7 @@ class MiningContract extends Component {
     withdrawInterval: 0,
     withdrawAmount: '',
     owner: '',
+    receiver: '',
     newOwner: '',
     canWithdraw: false,
     checkWithdrawText: '',
@@ -38,6 +39,7 @@ class MiningContract extends Component {
 
     const currentBlockNumber = await web3.eth.getBlockNumber();
     const owner = await contract.methods.owner().call();
+    const receiver = await contract.methods.receiver().call();
     const withdrawInterval = await contract.methods.withdrawInterval().call();
     const withdrawAmount = await contract.methods.withdrawAmount().call();
     await this.checkWithdrawStatus();
@@ -45,6 +47,7 @@ class MiningContract extends Component {
     this.setState({
       currentBlockNumber,
       owner,
+      receiver,
       withdrawInterval: Number(withdrawInterval),
       withdrawAmount: web3.utils.fromWei(toDecimalString(withdrawAmount), 'ether'),
     });
@@ -137,7 +140,7 @@ class MiningContract extends Component {
 
   render() {
     const { classes, currentAddress, title } = this.props;
-    const { owner } = this.state;
+    const { owner, receiver } = this.state;
 
     if (!currentAddress || !web3) {
       return <div />;
@@ -151,6 +154,9 @@ class MiningContract extends Component {
           </Typography>
           <Typography variant="subtitle1">
             This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+          </Typography>
+          <Typography variant="subtitle1">
+            The receiver is <AddressWrapper>{receiver}</AddressWrapper>.
           </Typography>
         </ContractInfoContainer>
         {this.renderOwnerFunctions()}
