@@ -6,6 +6,7 @@ import APIField from '../../APIField';
 import AddressWrapper from '../../AddressWrapper';
 import TabContentContainer from '../../TabContentContainer';
 import ContractInfoContainer from '../../ContractInfoContainer';
+import NotDeployedNotice from '../../NotDeployedNotice';
 import web3 from '../../../web3';
 import { addressesEqual, toDecimalString } from '../../../utils';
 
@@ -17,8 +18,8 @@ class MiningContract extends Component {
     withdrawAmount: '',
     owner: '',
     newOwner: '',
-    canWithdraw: false,
-    checkWithdrawText: '',
+    receiver: '',
+    newReceiver: '',
   };
 
   componentDidMount() {
@@ -38,6 +39,7 @@ class MiningContract extends Component {
 
     const currentBlockNumber = await web3.eth.getBlockNumber();
     const owner = await contract.methods.owner().call();
+    const receiver = await contract.methods.receiver().call();
     const withdrawInterval = await contract.methods.withdrawInterval().call();
     const withdrawAmount = await contract.methods.withdrawAmount().call();
     await this.checkWithdrawStatus();
@@ -45,7 +47,8 @@ class MiningContract extends Component {
     this.setState({
       currentBlockNumber,
       owner,
-      withdrawInterval: Number(withdrawInterval),
+      receiver,
+      withdrawInterval: withdrawInterval.toNumber(),
       withdrawAmount: web3.utils.fromWei(toDecimalString(withdrawAmount), 'ether'),
     });
   }
@@ -56,17 +59,19 @@ class MiningContract extends Component {
     const currentBlockNumber = await web3.eth.getBlockNumber();
     this.setState({
       currentBlockNumber: Number(currentBlockNumber),
-      lastWithdrawBlock: Number(lastWithdrawBlock),
-    }, () => {
-      this.renderWithdrawLabelText();
+      lastWithdrawBlock: lastWithdrawBlock.toNumber(),
     });
   }
 
   withdraw = async () => {
     const { contract, currentAddress } = this.props;
     await contract.methods.withdraw().send({ from: currentAddress });
-    await this.checkWithdrawStatus();
-    this.renderWithdrawLabelText();
+  }
+
+  setReceiver = async () => {
+    const { contract, currentAddress } = this.props;
+    const { newReceiver } = this.state;
+    await contract.methods.setReceiver(newReceiver).send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
@@ -83,15 +88,17 @@ class MiningContract extends Component {
     });
   };
 
-  renderWithdrawLabelText = () => {
+  createWithdrawLabelText = () => {
     const {
       withdrawInterval,
       withdrawAmount,
       currentBlockNumber,
       lastWithdrawBlock,
     } = this.state;
-    const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
 
+    const canWithdraw = (currentBlockNumber && lastWithdrawBlock && withdrawInterval)
+      ? Boolean(currentBlockNumber - lastWithdrawBlock >= withdrawInterval)
+      : false;
     let checkWithdrawText;
     if (canWithdraw) {
       const times = Math.floor((currentBlockNumber - lastWithdrawBlock) / withdrawInterval);
@@ -105,13 +112,13 @@ class MiningContract extends Component {
         You cannot withdraw now. 
         The next withdraw block number is ${nextWithdrawBlock}.`;
     }
-    this.setState({ canWithdraw, checkWithdrawText });
+    return { canWithdraw, checkWithdrawText };
   }
 
-  renderOwnerFunctions = () => {
-    const { currentAddress } = this.props;
-    const { owner, canWithdraw, checkWithdrawText } = this.state;
-    return addressesEqual(currentAddress, owner) && (
+  renderFunctions = () => {
+    const { canWithdraw, checkWithdrawText } = this.createWithdrawLabelText();
+
+    return (
       <Fragment>
         <APIField
           title={`Check Withdrawable Status ${canWithdraw ? ' & Withdraw' : ''}`}
@@ -121,6 +128,24 @@ class MiningContract extends Component {
           buttonText="Check"
           secondButtonText={canWithdraw && 'Withdraw'}
           value={checkWithdrawText}
+        />
+      </Fragment>
+    );
+  }
+
+  renderOwnerFunctions = () => {
+    const { currentAddress } = this.props;
+    const { owner } = this.state;
+    return addressesEqual(currentAddress, owner) && (
+      <Fragment>
+        <APIField
+          title="Set Receiver (Only Owner)"
+          description="Changes the receiver of any withdraws."
+          handleChange={this.handleChange}
+          changeStateName="newReceiver"
+          onClickFunc={this.setReceiver}
+          buttonText="Set"
+          label="Address"
         />
         <APIField
           title="Transfer Ownership (Only Owner)"
@@ -136,8 +161,13 @@ class MiningContract extends Component {
   }
 
   render() {
-    const { classes, currentAddress, title } = this.props;
-    const { owner } = this.state;
+    const {
+      classes,
+      contract,
+      currentAddress,
+      title,
+    } = this.props;
+    const { owner, receiver } = this.state;
 
     if (!currentAddress || !web3) {
       return <div />;
@@ -149,11 +179,25 @@ class MiningContract extends Component {
           <Typography variant="h4" className={classes.heading}>
             {title}
           </Typography>
-          <Typography variant="subtitle1">
-            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
-          </Typography>
+          {contract ? (
+            <Fragment>
+              <Typography variant="subtitle1">
+                This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+              </Typography>
+              <Typography variant="subtitle1">
+                The receiver is <AddressWrapper>{receiver}</AddressWrapper>.
+              </Typography>
+            </Fragment>
+          ) : (
+            <NotDeployedNotice />
+          )}
         </ContractInfoContainer>
-        {this.renderOwnerFunctions()}
+        {contract && (
+          <Fragment>
+            {this.renderFunctions()}
+            {this.renderOwnerFunctions()}
+          </Fragment>
+        )}
       </TabContentContainer>
     );
   }

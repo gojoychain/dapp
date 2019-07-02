@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
-import pot from '../../contracts/pot';
-import poi from '../../contracts/poi';
-import poc from '../../contracts/poc';
+import ProofOfTransaction from '../../contracts/proof-of-transaction';
+import ProofOfInvestment from '../../contracts/proof-of-investment';
+import ProofOfContribution from '../../contracts/proof-of-contribution';
 import BaseMiningContract from './BaseMiningContract';
 
 const MiningContracts = (props) => {
@@ -9,19 +9,19 @@ const MiningContracts = (props) => {
   return (
     <Fragment>
       <BaseMiningContract
-        contract={pot()}
+        contract={ProofOfTransaction()}
         currentAddress={currentAddress}
-        title="Proof Of Transaction Contract"
+        title="Proof of Transaction Contract"
       />
       <BaseMiningContract
-        contract={poi()}
+        contract={ProofOfInvestment()}
         currentAddress={currentAddress}
-        title="Proof Of Investment Contract"
+        title="Proof of Investment Contract"
       />
       <BaseMiningContract
-        contract={poc()}
+        contract={ProofOfContribution()}
         currentAddress={currentAddress}
-        title="Proof Of Contribution Contract"
+        title="Proof of Contribution Contract"
       />
     </Fragment>
   );
