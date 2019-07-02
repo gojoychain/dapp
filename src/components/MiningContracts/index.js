@@ -11,17 +11,17 @@ const MiningContracts = (props) => {
       <BaseMiningContract
         contract={ProofOfTransaction()}
         currentAddress={currentAddress}
-        title="Proof Of Transaction Contract"
+        title="Proof of Transaction Contract"
       />
       <BaseMiningContract
         contract={ProofOfInvestment()}
         currentAddress={currentAddress}
-        title="Proof Of Investment Contract"
+        title="Proof of Investment Contract"
       />
       <BaseMiningContract
         contract={ProofOfContribution()}
         currentAddress={currentAddress}
-        title="Proof Of Contribution Contract"
+        title="Proof of Contribution Contract"
       />
     </Fragment>
   );

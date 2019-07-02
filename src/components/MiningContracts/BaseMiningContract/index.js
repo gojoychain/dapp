@@ -17,8 +17,9 @@ class MiningContract extends Component {
     withdrawInterval: 0,
     withdrawAmount: '',
     owner: '',
-    receiver: '',
     newOwner: '',
+    receiver: '',
+    newReceiver: '',
   };
 
   componentDidMount() {
@@ -65,6 +66,12 @@ class MiningContract extends Component {
   withdraw = async () => {
     const { contract, currentAddress } = this.props;
     await contract.methods.withdraw().send({ from: currentAddress });
+  }
+
+  setReceiver = async () => {
+    const { contract, currentAddress } = this.props;
+    const { newReceiver } = this.state;
+    await contract.methods.setReceiver(newReceiver).send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
@@ -131,6 +138,15 @@ class MiningContract extends Component {
     const { owner } = this.state;
     return addressesEqual(currentAddress, owner) && (
       <Fragment>
+        <APIField
+          title="Set Receiver (Only Owner)"
+          description="Changes the receiver of any withdraws."
+          handleChange={this.handleChange}
+          changeStateName="newReceiver"
+          onClickFunc={this.setReceiver}
+          buttonText="Set"
+          label="Address"
+        />
         <APIField
           title="Transfer Ownership (Only Owner)"
           description="Transfers the contract ownership to the given address."
