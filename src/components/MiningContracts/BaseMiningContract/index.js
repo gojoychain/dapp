@@ -48,7 +48,7 @@ class MiningContract extends Component {
       currentBlockNumber,
       owner,
       receiver,
-      withdrawInterval: Number(withdrawInterval),
+      withdrawInterval: withdrawInterval.toNumber(),
       withdrawAmount: web3.utils.fromWei(toDecimalString(withdrawAmount), 'ether'),
     });
   }
@@ -59,7 +59,7 @@ class MiningContract extends Component {
     const currentBlockNumber = await web3.eth.getBlockNumber();
     this.setState({
       currentBlockNumber: Number(currentBlockNumber),
-      lastWithdrawBlock: Number(lastWithdrawBlock),
+      lastWithdrawBlock: lastWithdrawBlock.toNumber(),
     }, () => {
       this.renderWithdrawLabelText();
     });
@@ -93,6 +93,9 @@ class MiningContract extends Component {
       currentBlockNumber,
       lastWithdrawBlock,
     } = this.state;
+    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> currentBlockNumber', currentBlockNumber);
+    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> withdrawInterval', withdrawInterval);
+    console.log('NAKA: MiningContract -> renderWithdrawLabelText -> lastWithdrawBlock', lastWithdrawBlock);
     const canWithdraw = currentBlockNumber - lastWithdrawBlock >= withdrawInterval;
 
     let checkWithdrawText;
@@ -111,10 +114,9 @@ class MiningContract extends Component {
     this.setState({ canWithdraw, checkWithdrawText });
   }
 
-  renderOwnerFunctions = () => {
-    const { currentAddress } = this.props;
-    const { owner, canWithdraw, checkWithdrawText } = this.state;
-    return addressesEqual(currentAddress, owner) && (
+  renderFunctions = () => {
+    const { canWithdraw, checkWithdrawText } = this.state;
+    return (
       <Fragment>
         <APIField
           title={`Check Withdrawable Status ${canWithdraw ? ' & Withdraw' : ''}`}
@@ -125,6 +127,15 @@ class MiningContract extends Component {
           secondButtonText={canWithdraw && 'Withdraw'}
           value={checkWithdrawText}
         />
+      </Fragment>
+    );
+  }
+
+  renderOwnerFunctions = () => {
+    const { currentAddress } = this.props;
+    const { owner } = this.state;
+    return addressesEqual(currentAddress, owner) && (
+      <Fragment>
         <APIField
           title="Transfer Ownership (Only Owner)"
           description="Transfers the contract ownership to the given address."
@@ -159,6 +170,7 @@ class MiningContract extends Component {
             The receiver is <AddressWrapper>{receiver}</AddressWrapper>.
           </Typography>
         </ContractInfoContainer>
+        {this.renderFunctions()}
         {this.renderOwnerFunctions()}
       </TabContentContainer>
     );
