@@ -143,6 +143,7 @@ class MainContainer extends Component {
         {selectedTab === TAB_JUSD && (
           <TabContainer>
             <JUSDContract
+              network={network}
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
             />

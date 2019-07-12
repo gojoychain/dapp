@@ -12,6 +12,7 @@ import { addressesEqual, toDecimalString } from '../../utils';
 
 class JUSDContract extends Component {
   state = {
+    jusdContract: undefined,
     owner: '',
     newOwner: '',
     jusdBalance: '',
@@ -34,13 +35,15 @@ class JUSDContract extends Component {
   }
 
   initState = async () => {
-    const { currentAddress } = this.props;
-    if (!currentAddress || !web3 || !JUSD()) return;
+    const { network, currentAddress } = this.props;
+    if (!network || !currentAddress || !web3) return;
 
-    const owner = await JUSD().methods.owner().call();
-    const jusdBalance = await JUSD().methods.balanceOf(currentAddress).call();
+    const jusdContract = JUSD(network);
+    const owner = await jusdContract.methods.owner().call();
+    const jusdBalance = await jusdContract.methods.balanceOf(currentAddress).call();
     const balance = await web3.eth.getBalance(currentAddress);
     this.setState({
+      jusdContract,
       owner,
       jusdBalance: toDecimalString(jusdBalance),
       balance: toDecimalString(balance),
@@ -54,8 +57,9 @@ class JUSDContract extends Component {
   };
 
   balanceOf = async () => {
-    const { balanceOfAddr } = this.state;
-    const balance = await JUSD().methods.balanceOf(balanceOfAddr.toLowerCase())
+    const { jusdContract, balanceOfAddr } = this.state;
+    const balance = await jusdContract.methods
+      .balanceOf(balanceOfAddr.toLowerCase())
       .call();
     this.setState({
       balanceOf: web3.utils.fromWei(toDecimalString(balance), 'ether'),
@@ -64,24 +68,25 @@ class JUSDContract extends Component {
 
   mintTokens = async () => {
     const { currentAddress } = this.props;
-    const { mintValue } = this.state;
-    await JUSD().methods
+    const { jusdContract, mintValue } = this.state;
+    await jusdContract.methods
       .mint(currentAddress, web3.utils.toWei(mintValue, 'ether'))
       .send({ from: currentAddress });
   }
 
   burnTokens = async () => {
     const { currentAddress } = this.props;
-    const { burnValue } = this.state;
-    await JUSD().methods
+    const { jusdContract, burnValue } = this.state;
+    await jusdContract.methods
       .burn(currentAddress, web3.utils.toWei(burnValue, 'ether'))
       .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
     const { currentAddress } = this.props;
-    const { newOwner } = this.state;
-    await JUSD().methods.transferOwnership(newOwner)
+    const { jusdContract, newOwner } = this.state;
+    await jusdContract.methods
+      .transferOwnership(newOwner)
       .send({ from: currentAddress });
   }
 
@@ -130,13 +135,14 @@ class JUSDContract extends Component {
   render() {
     const { classes, currentAddress } = this.props;
     const {
+      jusdContract,
       owner,
       jusdBalance,
       balance,
       balanceOf,
     } = this.state;
 
-    if (!currentAddress || !web3) {
+    if (!jusdContract || !currentAddress || !web3) {
       return <div />;
     }
 
