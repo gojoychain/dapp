@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
-
+import { isString } from 'lodash';
 import APIField from '../APIField';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
@@ -83,7 +83,9 @@ class AddressNameService extends Component {
 
   handleChange = name => (event) => {
     this.setState({
-      [name]: event.target.value,
+      [name]: isString(event.target.value)
+        ? event.target.value.toLowerCase()
+        : event.target.value,
     });
   };
 
