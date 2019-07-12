@@ -11,6 +11,7 @@ import { addressesEqual } from '../../utils';
 
 class AddressNameService extends Component {
   state = {
+    contract: undefined,
     owner: '',
     newOwner: '',
     nameValue: '',
@@ -33,45 +34,51 @@ class AddressNameService extends Component {
   }
 
   initState = async () => {
-    const { currentAddress } = this.props;
-    if (!currentAddress || !ANS()) return;
+    const { network, currentAddress } = this.props;
+    if (!network || !currentAddress) return;
 
-    const owner = await ANS().methods.owner().call();
-    this.setState({ owner });
+    const contract = ANS(network);
+    const owner = await contract.methods.owner().call();
+    this.setState({ contract, owner });
   }
 
   resolveAddress = async () => {
-    const { nameValue } = this.state;
-    const addressValue = await ANS().methods.resolveName(nameValue).call();
+    const { contract, nameValue } = this.state;
+    const addressValue = await contract.methods.resolveName(nameValue).call();
     this.setState({ addressValue });
   }
 
   getMinLimit = async () => {
-    const { limitAddress } = this.state;
-    const minLimit = await ANS().methods
-      .getMinLimit(limitAddress.toLowerCase()).call();
+    const { contract, limitAddress } = this.state;
+    const minLimit = await contract.methods
+      .getMinLimit(limitAddress.toLowerCase())
+      .call();
     this.setState({ minLimit });
   }
 
   assignName = async () => {
     const { currentAddress } = this.props;
-    const { newNameValue } = this.state;
-    await ANS().methods.assignName(newNameValue).send({ from: currentAddress });
+    const { contract, newNameValue } = this.state;
+    await contract.methods
+      .assignName(newNameValue)
+      .send({ from: currentAddress });
     this.setState({ nameValue: newNameValue });
   }
 
   setMinLimit = async () => {
     const { currentAddress } = this.props;
-    const { limitAddress, newMinLimit } = this.state;
-    await ANS().methods
+    const { contract, limitAddress, newMinLimit } = this.state;
+    await contract.methods
       .setMinLimit(limitAddress.toLowerCase(), newMinLimit)
       .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
     const { currentAddress } = this.props;
-    const { newOwner } = this.state;
-    await ANS().methods.transferOwnership(newOwner).send({ from: currentAddress });
+    const { contract, newOwner } = this.state;
+    await contract.methods
+      .transferOwnership(newOwner)
+      .send({ from: currentAddress });
   }
 
   handleChange = name => (event) => {

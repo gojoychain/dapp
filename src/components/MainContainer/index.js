@@ -135,6 +135,7 @@ class MainContainer extends Component {
         {selectedTab === TAB_ANS && (
           <TabContainer>
             <AddressNameService
+              network={network}
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
             />

@@ -8,8 +8,8 @@ const abi = [{"type":"function","stateMutability":"nonpayable","payable":false,"
 let mainnet;
 let testnet;
 
-export default () => {
-  switch (web3.givenProvider.networkVersion) {
+export default (network) => {
+  switch (network) {
     case CHAIN_ID.MAINNET: {
       if (!mainnet) {
         mainnet = new web3.eth.Contract(abi, mainnetAddr);
