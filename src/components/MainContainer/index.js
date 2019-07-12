@@ -153,6 +153,7 @@ class MainContainer extends Component {
         {selectedTab === TAB_MINING_CONTRACTS && (
           <TabContainer>
             <MiningContracts
+              network={network}
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
             />

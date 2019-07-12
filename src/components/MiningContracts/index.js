@@ -5,21 +5,21 @@ import ProofOfContribution from '../../contracts/proof-of-contribution';
 import BaseMiningContract from './BaseMiningContract';
 
 const MiningContracts = (props) => {
-  const { currentAddress } = props;
+  const { network, currentAddress } = props;
   return (
     <Fragment>
       <BaseMiningContract
-        contract={ProofOfTransaction()}
+        contract={ProofOfTransaction(network)}
         currentAddress={currentAddress}
         title="Proof of Transaction Contract"
       />
       <BaseMiningContract
-        contract={ProofOfInvestment()}
+        contract={ProofOfInvestment(network)}
         currentAddress={currentAddress}
         title="Proof of Investment Contract"
       />
       <BaseMiningContract
-        contract={ProofOfContribution()}
+        contract={ProofOfContribution(network)}
         currentAddress={currentAddress}
         title="Proof of Contribution Contract"
       />
