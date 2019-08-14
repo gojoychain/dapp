@@ -92,34 +92,34 @@ class DEFIContract extends Component {
       .send({ from: currentAddress });
   }
 
+  renderFunctions = () => {
+    const {
+      balanceOf,
+    } = this.state;
+
+    return (
+      <Fragment>
+        <APIField
+          title="Get Balance"
+          description="Gets the balance for a given address."
+          handleChange={this.handleChange}
+          changeStateName="balanceOfAddr"
+          onClickFunc={this.balanceOf}
+          buttonText="Check"
+          label="Address"
+          helperText="Balance is "
+          value={balanceOf}
+        />
+      </Fragment>
+    );
+  }
+
   renderOwnerFunctions = () => {
     const { currentAddress } = this.props;
     const { owner } = this.state;
 
     return addressesEqual(currentAddress, owner) && (
       <Fragment>
-        <APIField
-          title="Mint (Only Owner)"
-          handleChange={this.handleChange}
-          changeStateName="mintValue"
-          value=""
-          onClickFunc={this.mintTokens}
-          buttonText="Mint"
-          label="Amount"
-          helperText=""
-          adornment="JUSD"
-        />
-        <APIField
-          title="Burn (Only Owner)"
-          handleChange={this.handleChange}
-          changeStateName="burnValue"
-          value=""
-          onClickFunc={this.burnTokens}
-          buttonText="Burn"
-          label="Amount"
-          helperText=""
-          adornment="JUSD"
-        />
         <APIField
           title="Transfer Ownership (Only Owner)"
           handleChange={this.handleChange}
@@ -141,7 +141,6 @@ class DEFIContract extends Component {
       owner,
       defiBalance,
       balance,
-      balanceOf,
     } = this.state;
 
     if (!contract || !currentAddress || !web3) {
@@ -164,17 +163,7 @@ class DEFIContract extends Component {
             Current JOY balance: {web3.utils.fromWei(balance, 'ether')} JOY
           </Typography>
         </ContractInfoContainer>
-        <APIField
-          title="Get Balance"
-          description="Gets the balance for a given address."
-          handleChange={this.handleChange}
-          changeStateName="balanceOfAddr"
-          onClickFunc={this.balanceOf}
-          buttonText="Check"
-          label="Address"
-          helperText="Balance is "
-          value={balanceOf}
-        />
+        {this.renderFunctions()}
         {this.renderOwnerFunctions()}
       </TabContentContainer>
     );
