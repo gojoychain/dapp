@@ -3,6 +3,7 @@ import { withStyles, Typography } from '@material-ui/core';
 import { isString } from 'lodash';
 import APIField from '../APIField';
 import DEFI from '../../contracts/defi';
+import JUSD from '../../contracts/jusd';
 import AddressWrapper from '../AddressWrapper';
 import styles from './styles';
 import TabContentContainer from '../TabContentContainer';
@@ -10,15 +11,19 @@ import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
 import { addressesEqual, toDecimalString } from '../../utils';
 
+const EXCHANGE_FUNC_SIG = '0x045d0389';
+
 class DEFIContract extends Component {
   state = {
     contract: undefined,
+    jusdContract: undefined,
     owner: '',
     newOwner: '',
     defiBalance: '',
     joyBalance: '',
     balanceOfAddr: '',
-    balanceOf: '',
+    balanceOfRes: '',
+    exchangeAmt: '',
   };
 
   async componentDidMount() {
@@ -37,11 +42,13 @@ class DEFIContract extends Component {
     if (!network || !currentAddress || !web3) return;
 
     const contract = DEFI(network);
+    const jusdContract = JUSD(network);
     const owner = await contract.methods.owner().call();
     const defiBalance = await contract.methods.balanceOf(currentAddress).call();
     const joyBalance = await web3.eth.getBalance(currentAddress);
     this.setState({
       contract,
+      jusdContract,
       owner,
       defiBalance: toDecimalString(defiBalance),
       joyBalance: toDecimalString(joyBalance),
@@ -62,12 +69,18 @@ class DEFIContract extends Component {
       .balanceOf(balanceOfAddr.toLowerCase())
       .call();
     this.setState({
-      balanceOf: web3.utils.fromWei(toDecimalString(balance), 'ether'),
+      balanceOfRes: web3.utils.fromWei(toDecimalString(balance), 'ether'),
     });
   }
 
   exchange = async () => {
-
+    const { currentAddress } = this.props;
+    const { contract, jusdContract, exchangeAmt } = this.state;
+    await jusdContract.methods['transfer(address,uint256,bytes)'](
+      contract._address,
+      web3.utils.toWei(exchangeAmt, 'ether'),
+      EXCHANGE_FUNC_SIG,
+    ).send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
@@ -80,7 +93,7 @@ class DEFIContract extends Component {
 
   renderFunctions = () => {
     const {
-      balanceOf,
+      balanceOfRes,
     } = this.state;
 
     return (
@@ -94,18 +107,19 @@ class DEFIContract extends Component {
           buttonText="Check"
           label="Address"
           helperText="Balance is "
-          value={balanceOf}
+          value={balanceOfRes}
         />
         <APIField
           title="Exchange"
-          description="Exchange JUSD for DEFI tokens."
+          description="Exchange JUSD for DEFI tokens. Enter amount in decimal format (not Wei)."
           handleChange={this.handleChange}
-          changeStateName=""
+          changeStateName="exchangeAmt"
           onClickFunc={this.exchange}
           buttonText="Exchange"
-          label="Address"
+          label="Amount"
           helperText=""
           value=""
+          adornment="JUSD"
         />
       </Fragment>
     );
