@@ -155,13 +155,13 @@ class DEFIContract extends Component {
             DEFI Contract
           </Typography>
           <Typography variant="subtitle1">
-            This contract is owned by <AddressWrapper>{owner}</AddressWrapper>.
+            Owner: <AddressWrapper>{owner}</AddressWrapper>
           </Typography>
           <Typography variant="subtitle1">
-            Your current DEFI balance is {web3.utils.fromWei(defiBalance, 'ether')} JUSD.
+            Current DEFI balance: {web3.utils.fromWei(defiBalance, 'ether')} DEFI
           </Typography>
           <Typography variant="subtitle1">
-            Your current JOY balance is {web3.utils.fromWei(balance, 'ether')} JOY.
+            Current JOY balance: {web3.utils.fromWei(balance, 'ether')} JOY
           </Typography>
         </ContractInfoContainer>
         <APIField
