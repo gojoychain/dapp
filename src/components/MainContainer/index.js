@@ -16,8 +16,9 @@ import CreateToken from '../CreateToken';
 
 const TAB_ANS = 0;
 const TAB_JUSD = 1;
-const TAB_MINING_CONTRACTS = 2;
-const TAB_CREATE_TOKEN = 3;
+const TAB_DEFI = 2;
+const TAB_MINING_CONTRACTS = 3;
+const TAB_CREATE_TOKEN = 4;
 
 class MainContainer extends Component {
   state = {
@@ -122,6 +123,10 @@ class MainContainer extends Component {
               hidden={selectedTab !== TAB_JUSD}
             />
             <Tab
+              label="DEFI"
+              hidden={selectedTab !== TAB_DEFI}
+            />
+            <Tab
               label="Mining"
               hidden={selectedTab !== TAB_MINING_CONTRACTS}
             />
@@ -142,6 +147,15 @@ class MainContainer extends Component {
           </TabContainer>
         )}
         {selectedTab === TAB_JUSD && (
+          <TabContainer>
+            <JUSDContract
+              network={network}
+              currentAddress={currentAddress}
+              mmLoaded={mmLoaded}
+            />
+          </TabContainer>
+        )}
+        {selectedTab === TAB_DEFI && (
           <TabContainer>
             <JUSDContract
               network={network}
