@@ -10,6 +10,7 @@ import {
 import styles from './styles';
 import { CHAIN_ID } from '../../config';
 import JUSDContract from '../JUSDContract';
+import DEFIContract from '../DEFIContract';
 import AddressNameService from '../AddressNameService';
 import MiningContracts from '../MiningContracts';
 import CreateToken from '../CreateToken';
@@ -157,7 +158,7 @@ class MainContainer extends Component {
         )}
         {selectedTab === TAB_DEFI && (
           <TabContainer>
-            <JUSDContract
+            <DEFIContract
               network={network}
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}
