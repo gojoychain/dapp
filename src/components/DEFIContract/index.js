@@ -16,11 +16,9 @@ class DEFIContract extends Component {
     owner: '',
     newOwner: '',
     defiBalance: '',
-    balance: '',
+    joyBalance: '',
     balanceOfAddr: '',
     balanceOf: '',
-    mintValue: '',
-    burnValue: '',
   };
 
   async componentDidMount() {
@@ -41,12 +39,12 @@ class DEFIContract extends Component {
     const contract = DEFI(network);
     const owner = await contract.methods.owner().call();
     const defiBalance = await contract.methods.balanceOf(currentAddress).call();
-    const balance = await web3.eth.getBalance(currentAddress);
+    const joyBalance = await web3.eth.getBalance(currentAddress);
     this.setState({
       contract,
       owner,
       defiBalance: toDecimalString(defiBalance),
-      balance: toDecimalString(balance),
+      joyBalance: toDecimalString(joyBalance),
     });
   }
 
@@ -68,20 +66,8 @@ class DEFIContract extends Component {
     });
   }
 
-  mintTokens = async () => {
-    const { currentAddress } = this.props;
-    const { contract, mintValue } = this.state;
-    await contract.methods
-      .mint(currentAddress, web3.utils.toWei(mintValue, 'ether'))
-      .send({ from: currentAddress });
-  }
+  exchange = async () => {
 
-  burnTokens = async () => {
-    const { currentAddress } = this.props;
-    const { contract, burnValue } = this.state;
-    await contract.methods
-      .burn(currentAddress, web3.utils.toWei(burnValue, 'ether'))
-      .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
@@ -110,6 +96,17 @@ class DEFIContract extends Component {
           helperText="Balance is "
           value={balanceOf}
         />
+        <APIField
+          title="Exchange"
+          description="Exchange JUSD for DEFI tokens."
+          handleChange={this.handleChange}
+          changeStateName=""
+          onClickFunc={this.exchange}
+          buttonText="Exchange"
+          label="Address"
+          helperText=""
+          value=""
+        />
       </Fragment>
     );
   }
@@ -122,13 +119,14 @@ class DEFIContract extends Component {
       <Fragment>
         <APIField
           title="Transfer Ownership (Only Owner)"
+          description="Transfers ownership of the DEFI contract."
           handleChange={this.handleChange}
           changeStateName="newOwner"
-          value=""
           onClickFunc={this.transferOwnership}
           buttonText="Transfer"
           label="Address"
           helperText=""
+          value=""
         />
       </Fragment>
     );
@@ -140,7 +138,7 @@ class DEFIContract extends Component {
       contract,
       owner,
       defiBalance,
-      balance,
+      joyBalance,
     } = this.state;
 
     if (!contract || !currentAddress || !web3) {
@@ -160,7 +158,7 @@ class DEFIContract extends Component {
             Current DEFI balance: {web3.utils.fromWei(defiBalance, 'ether')} DEFI
           </Typography>
           <Typography variant="subtitle1">
-            Current JOY balance: {web3.utils.fromWei(balance, 'ether')} JOY
+            Current JOY balance: {web3.utils.fromWei(joyBalance, 'ether')} JOY
           </Typography>
         </ContractInfoContainer>
         {this.renderFunctions()}
