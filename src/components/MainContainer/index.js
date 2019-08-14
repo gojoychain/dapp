@@ -114,7 +114,7 @@ class MainContainer extends Component {
         <AppBar position="static">
           <Tabs value={selectedTab} onChange={this.handleTabChange}>
             <Tab
-              label="Address Name Service"
+              label="ANS"
               hidden={selectedTab !== TAB_ANS}
             />
             <Tab
@@ -122,7 +122,7 @@ class MainContainer extends Component {
               hidden={selectedTab !== TAB_JUSD}
             />
             <Tab
-              label="Mining Contracts"
+              label="Mining"
               hidden={selectedTab !== TAB_MINING_CONTRACTS}
             />
             <Tab
