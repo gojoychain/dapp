@@ -110,7 +110,7 @@ class DEFIContract extends Component {
           value={balanceOfRes}
         />
         <APIField
-          title="Exchange"
+          title="Exchange To DEFI"
           description="Exchange JUSD for DEFI tokens. Enter amount in decimal format (not Wei)."
           handleChange={this.handleChange}
           changeStateName="exchangeAmt"
@@ -120,6 +120,18 @@ class DEFIContract extends Component {
           helperText=""
           value=""
           adornment="JUSD"
+        />
+        <APIField
+          title="Exchange To JUSD"
+          description="Exchange DEFI for JUSD tokens. Enter amount in decimal format (not Wei)."
+          handleChange={this.handleChange}
+          changeStateName="exchangeAmt"
+          onClickFunc={this.exchange}
+          buttonText="Exchange"
+          label="Amount"
+          helperText=""
+          value=""
+          adornment="DEFI"
         />
       </Fragment>
     );
