@@ -11,7 +11,7 @@ import ContractInfoContainer from '../ContractInfoContainer';
 import web3 from '../../web3';
 import { addressesEqual, toDecimalString } from '../../utils';
 
-const EXCHANGE_FUNC_SIG = '0x045d0389';
+const EXCHANGE_FUNC_SIG = '0x1178acd9';
 
 class DEFIContract extends Component {
   state = {
