@@ -6,7 +6,6 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-
 import styles from './styles';
 import { CHAIN_ID } from '../../config';
 import JUSDContract from '../JUSDContract';
@@ -14,6 +13,7 @@ import DEFIContract from '../DEFIContract';
 import AddressNameService from '../AddressNameService';
 import MiningContracts from '../MiningContracts';
 import CreateToken from '../CreateToken';
+import { STORAGE_KEY } from '../../constants';
 
 const TAB_ANS = 0;
 const TAB_JUSD = 1;
@@ -31,6 +31,11 @@ class MainContainer extends Component {
   };
 
   componentDidMount() {
+    const storedTabIndex = localStorage.getItem(STORAGE_KEY.CURRENT_TAB_INDEX);
+    if (storedTabIndex) {
+      this.setState({ selectedTab: Number(storedTabIndex) });
+    }
+
     if (!window.web3) {
       this.setState({ currentAddress: undefined, network: undefined });
       return;
@@ -78,6 +83,8 @@ class MainContainer extends Component {
   }
 
   handleTabChange = (event, value) => {
+    // Store current tab index in localStorage for keeping tab state on refresh
+    localStorage.setItem(STORAGE_KEY.CURRENT_TAB_INDEX, value);
     this.setState({ selectedTab: value });
   };
 
