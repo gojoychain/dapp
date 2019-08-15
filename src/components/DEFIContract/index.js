@@ -23,7 +23,8 @@ class DEFIContract extends Component {
     jusdBalance: '',
     balanceOfAddr: '',
     balanceOfRes: '',
-    exchangeAmt: '',
+    exchangeToDEFIAmt: '',
+    exchangeToJUSDAmt: '',
   };
 
   async componentDidMount() {
@@ -73,14 +74,22 @@ class DEFIContract extends Component {
     });
   }
 
-  exchange = async () => {
+  exchangeToDEFI = async () => {
     const { currentAddress } = this.props;
-    const { contract, jusdContract, exchangeAmt } = this.state;
+    const { contract, jusdContract, exchangeToDEFIAmt } = this.state;
     await jusdContract.methods['transfer(address,uint256,bytes)'](
       contract._address,
-      web3.utils.toWei(exchangeAmt, 'ether'),
+      web3.utils.toWei(exchangeToDEFIAmt, 'ether'),
       EXCHANGE_FUNC_SIG,
     ).send({ from: currentAddress });
+  }
+
+  exchangeToJUSD = async () => {
+    const { currentAddress } = this.props;
+    const { contract, exchangeToJUSDAmt } = this.state;
+    await contract.methods
+      .exchangeToJUSD(web3.utils.toWei(exchangeToJUSDAmt, 'ether'))
+      .send({ from: currentAddress });
   }
 
   transferOwnership = async () => {
@@ -113,8 +122,8 @@ class DEFIContract extends Component {
           title="Exchange To DEFI"
           description="Exchange JUSD for DEFI tokens. Enter amount in decimal format (not Wei)."
           handleChange={this.handleChange}
-          changeStateName="exchangeAmt"
-          onClickFunc={this.exchange}
+          changeStateName="exchangeToDEFIAmt"
+          onClickFunc={this.exchangeToDEFI}
           buttonText="Exchange"
           label="Amount"
           helperText=""
@@ -125,8 +134,8 @@ class DEFIContract extends Component {
           title="Exchange To JUSD"
           description="Exchange DEFI for JUSD tokens. Enter amount in decimal format (not Wei)."
           handleChange={this.handleChange}
-          changeStateName="exchangeAmt"
-          onClickFunc={this.exchange}
+          changeStateName="exchangeToJUSDAmt"
+          onClickFunc={this.exchangeToJUSD}
           buttonText="Exchange"
           label="Amount"
           helperText=""
