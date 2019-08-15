@@ -20,7 +20,7 @@ class DEFIContract extends Component {
     owner: '',
     newOwner: '',
     defiBalance: '',
-    joyBalance: '',
+    jusdBalance: '',
     balanceOfAddr: '',
     balanceOfRes: '',
     exchangeAmt: '',
@@ -45,13 +45,13 @@ class DEFIContract extends Component {
     const jusdContract = JUSD(network);
     const owner = await contract.methods.owner().call();
     const defiBalance = await contract.methods.balanceOf(currentAddress).call();
-    const joyBalance = await web3.eth.getBalance(currentAddress);
+    const jusdBalance = await jusdContract.methods.balanceOf(currentAddress).call();
     this.setState({
       contract,
       jusdContract,
       owner,
       defiBalance: toDecimalString(defiBalance),
-      joyBalance: toDecimalString(joyBalance),
+      jusdBalance: toDecimalString(jusdBalance),
     });
   }
 
@@ -152,7 +152,7 @@ class DEFIContract extends Component {
       contract,
       owner,
       defiBalance,
-      joyBalance,
+      jusdBalance,
     } = this.state;
 
     if (!contract || !currentAddress || !web3) {
@@ -172,7 +172,7 @@ class DEFIContract extends Component {
             Current DEFI balance: {web3.utils.fromWei(defiBalance, 'ether')} DEFI
           </Typography>
           <Typography variant="subtitle1">
-            Current JOY balance: {web3.utils.fromWei(joyBalance, 'ether')} JOY
+            Current JUSD balance: {web3.utils.fromWei(jusdBalance, 'ether')} JUSD
           </Typography>
         </ContractInfoContainer>
         {this.renderFunctions()}
