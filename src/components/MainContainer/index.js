@@ -6,18 +6,20 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-
 import styles from './styles';
 import { CHAIN_ID } from '../../config';
 import JUSDContract from '../JUSDContract';
+import DEFIContract from '../DEFIContract';
 import AddressNameService from '../AddressNameService';
 import MiningContracts from '../MiningContracts';
 import CreateToken from '../CreateToken';
+import { STORAGE_KEY } from '../../constants';
 
 const TAB_ANS = 0;
 const TAB_JUSD = 1;
-const TAB_MINING_CONTRACTS = 2;
-const TAB_CREATE_TOKEN = 3;
+const TAB_DEFI = 2;
+const TAB_MINING_CONTRACTS = 3;
+const TAB_CREATE_TOKEN = 4;
 
 class MainContainer extends Component {
   state = {
@@ -29,6 +31,11 @@ class MainContainer extends Component {
   };
 
   componentDidMount() {
+    const storedTabIndex = localStorage.getItem(STORAGE_KEY.CURRENT_TAB_INDEX);
+    if (storedTabIndex) {
+      this.setState({ selectedTab: Number(storedTabIndex) });
+    }
+
     if (!window.web3) {
       this.setState({ currentAddress: undefined, network: undefined });
       return;
@@ -76,6 +83,8 @@ class MainContainer extends Component {
   }
 
   handleTabChange = (event, value) => {
+    // Store current tab index in localStorage for keeping tab state on refresh
+    localStorage.setItem(STORAGE_KEY.CURRENT_TAB_INDEX, value);
     this.setState({ selectedTab: value });
   };
 
@@ -114,7 +123,7 @@ class MainContainer extends Component {
         <AppBar position="static">
           <Tabs value={selectedTab} onChange={this.handleTabChange}>
             <Tab
-              label="Address Name Service"
+              label="ANS"
               hidden={selectedTab !== TAB_ANS}
             />
             <Tab
@@ -122,7 +131,11 @@ class MainContainer extends Component {
               hidden={selectedTab !== TAB_JUSD}
             />
             <Tab
-              label="Mining Contracts"
+              label="DEFI"
+              hidden={selectedTab !== TAB_DEFI}
+            />
+            <Tab
+              label="Mining"
               hidden={selectedTab !== TAB_MINING_CONTRACTS}
             />
             <Tab
@@ -144,6 +157,15 @@ class MainContainer extends Component {
         {selectedTab === TAB_JUSD && (
           <TabContainer>
             <JUSDContract
+              network={network}
+              currentAddress={currentAddress}
+              mmLoaded={mmLoaded}
+            />
+          </TabContainer>
+        )}
+        {selectedTab === TAB_DEFI && (
+          <TabContainer>
+            <DEFIContract
               network={network}
               currentAddress={currentAddress}
               mmLoaded={mmLoaded}

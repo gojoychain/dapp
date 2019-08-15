@@ -27,6 +27,10 @@
       "max-len": [
         "error", { "code": 140 }
       ],
+      "no-underscore-dangle": [
+        "error",
+        { "allow": ["_address"] }
+      ],
       "import/prefer-default-export": [
         "warn"
       ],

@@ -48,7 +48,7 @@ class MiningContract extends Component {
       currentBlockNumber,
       owner,
       receiver,
-      withdrawInterval: withdrawInterval.toNumber(),
+      withdrawInterval: Number(withdrawInterval),
       withdrawAmount: web3.utils.fromWei(toDecimalString(withdrawAmount), 'ether'),
     });
   }
@@ -59,7 +59,7 @@ class MiningContract extends Component {
     const currentBlockNumber = await web3.eth.getBlockNumber();
     this.setState({
       currentBlockNumber: Number(currentBlockNumber),
-      lastWithdrawBlock: lastWithdrawBlock.toNumber(),
+      lastWithdrawBlock: Number(lastWithdrawBlock),
     });
   }
 
